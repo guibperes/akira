@@ -67,3 +67,5 @@
 - Helper to show all keybinds
 - Screenrecord
 - Akira: Bootscreen
+- Brightness notification bar
+- Remove Shutdown/reboot helper and use wofi or ly
