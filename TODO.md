@@ -69,3 +69,4 @@
 - Akira: Bootscreen
 - Brightness notification bar
 - Remove Shutdown/reboot helper and use wofi or ly
+- Notifications control with Keyboard
