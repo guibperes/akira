@@ -27,6 +27,7 @@ git
 curl
 less
 jq
+zip
 ffmpeg
 mpv
 yt-dlp
