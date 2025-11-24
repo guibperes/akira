@@ -2,6 +2,10 @@ linux-headers
 dkms
 fwupd
 iwd
+networkmanager
+nmap
+wavemon
+mtr
 cups
 avahi
 gst-plugins-ugly
@@ -44,6 +48,7 @@ playerctl
 brightnessctl
 bluetui
 btop
+amdgpu_top
 task
 taskwarrior-tui
 docker
