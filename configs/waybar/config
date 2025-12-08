@@ -33,17 +33,17 @@
   "cpu": {
     "interval": 5,
     "format": "󰍛 {usage}%",
-    "on-click": "kitty -e btop"
+    "on-click": "kitty --class=Monitor -e akira-monitor"
   },
   "memory": {
     "interval": 5,
     "format": " {percentage}%",
-    "on-click": "kitty -e btop"
+    "on-click": "kitty --class=Monitor -e akira-monitor"
   },
   "temperature": {
     "interval": 5,
     "format": " {temperatureC}°C",
-    "on-click": "kitty -e btop"
+    "on-click": "kitty --class=Monitor -e akira-monitor"
   },
   "network": {
     "format-icons": [
@@ -97,7 +97,7 @@
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
     "interval": 5,
-    "on-click": "kitty -e btop",
+    "on-click": "kitty --class=Monitor -e akira-monitor",
     "states": {
       "warning": 20,
       "critical": 10
