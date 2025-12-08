@@ -4,3 +4,4 @@ cups
 iwd
 avahi-daemon
 avahi-dnsconfd
+NetworkManager
