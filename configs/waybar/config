@@ -108,7 +108,7 @@
     "format-disabled": "󰂲",
     "format-connected": "",
     "tooltip-format": "Devices connected: {num_connections}",
-    "on-click": "kitty --class=Bluetooth -e bluetui"
+    "on-click": "kitty --class=Bluetooth -e akira-bluetooth"
   },
   "pulseaudio": {
     "format": "{icon}",
