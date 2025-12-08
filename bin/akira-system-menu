@@ -1,0 +1,11 @@
+#!/bin/bash
+
+OPTION=$(printf "Power Off\nReboot\nLogout\nLock" | wofi --dmenu --prompt "System Menu:")
+
+# TODO: use hyprshutdown whenether is possible to install (AUR or pacman)
+case "$OPTION" in
+  "Power Off") systemctl poweroff --no-wall ;;
+  "Reboot") systemctl reboot --no-wall ;;
+  "Logout") echo "Logout" ;;
+  "Lock") hyprlock ;;
+esac

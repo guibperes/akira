@@ -2,3 +2,5 @@ mode=drun
 allow_images=true
 image_size=48
 no_actions=true
+insensitive=true
+
