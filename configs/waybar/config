@@ -62,7 +62,7 @@
     "tooltip-format-disconnected": "Disconnected",
     "interval": 3,
     "spacing": 1,
-    "on-click": "kitty --class=Network -e impala"
+    "on-click": "kitty --class=Network -e akira-network"
   },
   "battery": {
     "format": "{icon} {capacity}%",
