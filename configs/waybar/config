@@ -28,7 +28,7 @@
   },
   "clock": {
     "format": "{:L%A %d %B %H:%M}",
-    "on-click": "kitty --class=Calendar -e calcure"
+    "on-click": "kitty --class=Calendar -e akira-calendar"
   },
   "cpu": {
     "interval": 5,
