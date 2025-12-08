@@ -42,7 +42,6 @@ mise
 texlive
 texlive-langportuguese
 biber
-impala
 wiremix
 playerctl
 brightnessctl
