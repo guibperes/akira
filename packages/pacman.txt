@@ -64,6 +64,9 @@ sushi
 gnome-calculator
 papers
 gnome-font-viewer
+gnome-firmware
+fragments
+handbrake
 secrets
 loupe
 nwg-look
