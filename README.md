@@ -38,7 +38,7 @@ The Akira visual identity blends **modern minimalism** with **cyberpunk underton
 | **Hyprlock** | Lockscreen. |
 | **Dunst** | Notification daemon. |
 | **Grim** and **Slurp** | Screenshot application. |
-| **iwd** and **impala** | Network and WiFi management. |
+| **networkmanager** and **impala** | Network and WiFi management. |
 | **Kanshi** | Monitor profile management. |
 | **Ly** | Minimal TUI login manager. |
 | **Waybar** | Lightweight status bar. |
