@@ -1,6 +1,0 @@
-minecraft-launcher
-onlyoffice-bin
-tokyonight-gtk-theme-git
-wofi-emoji
-calcure
-hplip-plugin

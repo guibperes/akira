@@ -9,4 +9,10 @@ cd $AKIRA_DIR_PATH
 rm -rf $YAY_DIR
 
 yay -Y --gendb
-cat $AKIRA_PKG_PATH/yay.txt | xargs yay -S --noconfirm
+yay -S --noconfirm \
+  minecraft-launcher \
+  onlyoffice-bin \
+  tokyonight-gtk-theme-git \
+  wofi-emoji \
+  calcure \
+  hplip-plugin
