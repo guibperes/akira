@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo -e "# Copying configuration files"
-mkdir -p $HOME/Pictures/wallpapers
+mkdir -p $HOME/Pictures/wallpapers $HOME_CONFIG_PATH/systemd
 
 cp -r \
   $AKIRA_CONFIG_PATH/calcure \
@@ -18,6 +18,9 @@ cp -r \
   $AKIRA_CONFIG_PATH/xdg-desktop-portal \
   $AKIRA_CONFIG_PATH/starship.toml \
   $HOME_CONFIG_PATH
+
+cp -r $AKIRA_CONFIG_PATH/ssh $HOME/.ssh
+cp -r $AKIRA_CONFIG_PATH/systemd/user $HOME_CONFIG_PATH/systemd
 
 cp $AKIRA_CONFIG_PATH/.XCompose $HOME/.XCompose
 cp $AKIRA_DIR_PATH/assets/akira_wallpaper.jpg $HOME/Pictures/wallpapers
