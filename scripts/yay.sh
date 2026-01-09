@@ -15,4 +15,5 @@ yay -S --noconfirm \
   tokyonight-gtk-theme-git \
   wofi-emoji \
   calcure \
+  eilmeldung \
   hplip-plugin

@@ -1,0 +1,24 @@
+feed_list_focused_width = "25%"
+article_list_focused_width = "75%"
+article_list_focused_height = "40%"
+article_content_focused_height = "60%"
+
+date_format = "%d/%m/%Y %H:%M"
+content_preferred_type = "markdown"
+keep_articles_days = 999
+
+feed_list = [
+  'query: "Today Unread" today unread',
+  'query: "Today Marked" today marked',
+  "feeds",
+  "* categories"
+]
+
+share_targets = [
+  "clipboard",
+  "mpv mpv {url}"
+]
+
+[input_config.mappings]
+"S x" = ["share mpv"]
+

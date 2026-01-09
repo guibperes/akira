@@ -6,6 +6,7 @@ mkdir -p $HOME/Pictures/wallpapers $HOME_CONFIG_PATH/systemd
 cp -r \
   $AKIRA_CONFIG_PATH/calcure \
   $AKIRA_CONFIG_PATH/dunst \
+  $AKIRA_CONFIG_PATH/eilmeldung \
   $AKIRA_CONFIG_PATH/fastfetch \
   $AKIRA_CONFIG_PATH/fish \
   $AKIRA_CONFIG_PATH/hypr \
