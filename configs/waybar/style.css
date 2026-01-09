@@ -17,13 +17,13 @@ window#waybar {
   padding: 4px 8px;
 }
 
-#workspaces button.active {
-  background: #F7768E;
+#workspaces button:hover {
+  background: #414868;
   color: #1A1B26;
 }
 
-#workspaces button:hover {
-  background: #7DCFFF;
+#workspaces button.active {
+  background: #F7768E;
   color: #1A1B26;
 }
 
