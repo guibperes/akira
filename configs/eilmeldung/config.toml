@@ -20,5 +20,5 @@ share_targets = [
 ]
 
 [input_config.mappings]
-"S x" = ["share mpv"]
+"S m" = ["share mpv", "read"]
 
