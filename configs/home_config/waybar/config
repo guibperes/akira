@@ -12,6 +12,7 @@
   ],
   "modules-right": [
     "tray",
+    "privacy",
     "gamemode",
     "cpu",
     "memory",
@@ -126,8 +127,8 @@
     }
   },
   "tray": {
-    "icon-size": 12,
-    "spacing": 12
+    "icon-size": 14,
+    "spacing": 16
   },
   "gamemode": {
     "format": "{glyph} {count}"
@@ -137,5 +138,21 @@
     "on-click": "akira-notifications pause-toggle",
     "restart-interval": 1,
     "tooltip": false
+  },
+  "privacy": {
+    "icon-spacing": 16,
+    "icon-size": 12,
+    "modules": [
+      {
+        "type": "screenshare",
+        "tooltip": true,
+        "tooltip-icon-size": 24
+      },
+      {
+        "type": "audio-in",
+        "tooltip": true,
+        "tooltip-icon-size": 24
+      }
+    ]
   }
 }
