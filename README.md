@@ -27,42 +27,6 @@ The Akira visual identity blends **modern minimalism** with **cyberpunk underton
 - A palette based on the Tokyo Night scheme, adapted for contrast and readability.
 - The kanji **アキラ** stands as the symbolic core — representing clarity in technology and thought.
 
-### 🧩 Components
-
-| Component | Description |
-|------------|-------------|
-| **Hyprland** | Wayland compositor providing tiling, smooth animations, and full keyboard control. |
-| **Hyprlock** | Screen locker. |
-| **Hyprpaper** | Desktop wallpaper. |
-| **Hypridle** | Idle management daemon. |
-| **Hyprlock** | Lockscreen. |
-| **Dunst** | Notification daemon. |
-| **Grim** and **Slurp** | Screenshot application. |
-| **networkmanager** and **impala** | Network and WiFi management. |
-| **Kanshi** | Monitor profile management. |
-| **Ly** | Minimal TUI login manager. |
-| **Waybar** | Lightweight status bar. |
-| **Wofi** | Application launcher. |
-| **Wofi emoji** | Emoji selector. |
-| **Fish** | Command line shell. |
-| **Kitty** | Terminal emulator. |
-| **wpctl** and **playerctl** | Audio keyboard management shortcuts. |
-| **brightnessctl** | Brightness keyboard management. |
-| **fastfetch** | System information list. |
-| **Btop** | System monitor. |
-| **bluetui** | Bluetooth management. |
-| **wiremix** | Audio management. |
-| **taskwarrior** | Tasks and projects management. |
-| **calcure** | Calendar. |
-| **mpv** | Video Player. |
-| **spotify-player** | Spotify TUI application. |
-| **Papirus Dark** | Icon theme. |
-| **Nautilus** | File manager. |
-| **Gnome Calculator** | Calculator application. |
-| **Papers** | PDF Viewer. |
-| **Loupe** | Image viewer. |
-| **Gnome Font Viewer** | Font viewer. |
-
 ### 🌈 Color Palette
 
 | Role | Hex | RGBA |
