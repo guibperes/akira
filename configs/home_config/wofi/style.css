@@ -1,32 +1,26 @@
-/* ===========================
-   Akira Theme (Tokyo Night)
-   Wofi
-   =========================== */
+@import url("/home/guilherme/.config/akira_style/style.css");
 
-/* Window */
 window {
-  background-color: #1A1B26;
-  color: #C0CAF5;
-  border: 2px solid #F7768E; /* Red neon border */
+  background-color: @background;
+  color: @white;
+  border: 2px solid @red;
   font-family: JetBrainsMono Nerd Font Mono, monospace;
   font-size: 14px;
   font-weight: bold;
 }
 
-/* Input field */
 #input {
-  background-color: #1A1B26;
-  color: #C0CAF5;
-  border: 2px solid #F7768E;
+  background-color: @background;
+  color: @white;
+  border: 2px solid @red;
   border-radius: 0px;
   padding: 5px;
 }
 
 #input:focus {
-  border-color: #7DCFFF; /* Cyan highlight */
+  border-color: @cyan;
 }
 
-/* Entries */
 #entry {
   background-color: transparent;
   padding: 5px;
@@ -34,26 +28,23 @@ window {
 }
 
 #entry:selected {
-  background-color: #F7768E; /* Red neon selection */
-  color: #1A1B26;
+  background-color: @red;
   border-radius: 0px;
 }
 
-/* Scrollbar */
 scrollbar {
-  background-color: #1A1B26;
+  background-color: @background;
 }
 
 scrollbar slider {
-  background-color: #414868;
+  background-color: @gray;
   border-radius: 0px;
 }
 
 scrollbar slider:hover {
-  background-color: #7DCFFF;
+  background-color: @gray;
 }
 
 image {
   margin: 10px;
 }
-

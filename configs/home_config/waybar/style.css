@@ -1,30 +1,31 @@
+@import url("../akira_style/style.css");
+
 * {
   font-family: JetBrainsMono Nerd Font, monospace;
-  color: #C0CAF5;
+  color: @white;
   font-size: 14px;
   font-weight: bold;
 }
 
 window#waybar {
-  background-color: #1A1B26;
+  background-color: @background;
   padding: 10px;
 }
 
 #workspaces button {
   background: transparent;
-  color: #C0CAF5;
+  color: @white;
   border-radius: 0px;
   padding: 4px 8px;
 }
 
 #workspaces button:hover {
-  background: #414868;
-  color: #1A1B26;
+  background: @gray;
 }
 
 #workspaces button.active {
-  background: #F7768E;
-  color: #1A1B26;
+  background: @red;
+  color: @background;
 }
 
 #tray,
@@ -54,7 +55,7 @@ window#waybar {
 #gamemode:hover,
 #mpris:hover,
 #custom-notifications:hover {
-  background: #414868;
+  background: @gray;
   border-radius: 0px;
 }
 
@@ -63,9 +64,9 @@ window#waybar {
 }
 
 #mpris.playing {
-  color: #9ECE6A;
+  color: @green;
 }
 
 #mpris.paused {
-  color: #E0AF68;
+  color: @yellow;
 }
