@@ -43,10 +43,6 @@ window#waybar {
   padding: 0 15px;
 }
 
-#tray:hover {
-  background: none;
-}
-
 #clock:hover,
 #battery:hover,
 #network:hover,
@@ -60,6 +56,10 @@ window#waybar {
 #custom-notifications:hover {
   background: #414868;
   border-radius: 0px;
+}
+
+#tray:hover {
+  background: none;
 }
 
 #mpris.playing {
