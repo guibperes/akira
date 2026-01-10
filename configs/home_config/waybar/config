@@ -118,6 +118,7 @@
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,
     "format-muted": "",
+    "format-bluetooth": "󰂰",
     "format-icons": {
       "default": [
         "",
