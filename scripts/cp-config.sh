@@ -3,7 +3,7 @@
 echo -e "# Copying configuration files"
 mkdir -p $HOME/Pictures/wallpapers
 
-cp -r $AKIRA_CONFIG_PATH/home_config $HOME_CONFIG_PATH
+cp -r $AKIRA_CONFIG_PATH/home_config/. $HOME_CONFIG_PATH
 cp -r $AKIRA_CONFIG_PATH/ssh $HOME/.ssh
 
 cp $AKIRA_CONFIG_PATH/.XCompose $HOME/.XCompose
