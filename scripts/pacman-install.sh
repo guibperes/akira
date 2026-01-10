@@ -40,6 +40,7 @@ sudo pacman -S --noconfirm \
   zip \
   ffmpeg \
   mpv \
+  mpv-mpris \
   yt-dlp \
   neovim \
   fastfetch \
