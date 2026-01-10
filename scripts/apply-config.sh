@@ -6,4 +6,5 @@ sudo chsh -s /bin/fish $USER
 gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
 kitten themes --reload-in all Akira
 xdg-user-dirs-update
+xdg-user-dirs-gtk-update
 fc-cache
