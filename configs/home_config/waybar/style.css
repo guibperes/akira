@@ -38,6 +38,7 @@ window#waybar {
 #temperature,
 #privacy,
 #clock,
+#mpris,
 #custom-notifications {
   padding: 0 15px;
 }
@@ -55,8 +56,16 @@ window#waybar {
 #memory:hover,
 #temperature:hover,
 #gamemode:hover,
+#mpris:hover,
 #custom-notifications:hover {
   background: #414868;
   border-radius: 0px;
 }
 
+#mpris.playing {
+  color: #9ECE6A;
+}
+
+#mpris.paused {
+  color: #E0AF68;
+}
