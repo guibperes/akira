@@ -9,7 +9,6 @@ keep_articles_days = 999
 
 feed_list = [
   'query: "Today Unread" today unread',
-  'query: "Today Marked" today marked',
   "feeds",
   "* categories"
 ]
@@ -20,5 +19,9 @@ share_targets = [
 ]
 
 [input_config.mappings]
+"r" = ["read", "nextunread"]
 "S m" = ["share mpv", "read"]
+"S r" = []
+"S t" = []
+"S i" = []
 
