@@ -6,6 +6,8 @@ article_content_focused_height = "60%"
 date_format = "%d/%m/%Y %H:%M"
 content_preferred_type = "markdown"
 keep_articles_days = 999
+sync_every_minutes = 15
+startup_commands = ["sync", "focus articles"]
 
 feed_list = [
   'query: "Today Unread" today unread',
@@ -22,7 +24,4 @@ share_targets = [
 "q" = ["quit"]
 "r" = ["read", "nextunread"]
 "S m" = ["share mpv", "read", "nextunread"]
-"S r" = []
-"S t" = []
-"S i" = []
 
