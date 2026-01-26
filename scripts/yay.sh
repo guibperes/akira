@@ -13,6 +13,5 @@ yay -S --noconfirm \
   onlyoffice-bin \
   tokyonight-gtk-theme-git \
   wofi-emoji \
-  calcure \
-  eilmeldung \
+  eilmeldung-bin \
   hplip-plugin
