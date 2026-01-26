@@ -23,5 +23,5 @@ share_targets = [
 [input_config.mappings]
 "q" = ["quit"]
 "r" = ["read", "nextunread"]
-"S m" = ["share mpv", "read", "nextunread"]
+"S m" = ["share mpv"]
 
