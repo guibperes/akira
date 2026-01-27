@@ -13,6 +13,8 @@ fish_add_path $HOME/.akira/bin
 # Remove greeting message
 set -g fish_greeting
 
+set -gx EDITOR nvim
+
 # Aliases
 alias l="la"
 alias spotify="spotify_player"
