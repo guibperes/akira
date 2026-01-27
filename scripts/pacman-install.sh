@@ -49,6 +49,8 @@ sudo pacman -S --noconfirm \
   neovim \
   fastfetch \
   spotify-player \
+  pass \
+  pass-otp \
   mise \
   texlive \
   texlive-langportuguese \
