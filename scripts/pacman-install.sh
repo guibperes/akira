@@ -4,6 +4,10 @@ echo -e "# Pacman package manager full system update and packages install"
 sudo cp $AKIRA_CONFIG_PATH/pacman.conf /etc/pacman.conf
 sudo pacman -Syu --noconfirm
 sudo pacman -S --noconfirm \
+  libimobiledevice \
+  usbmuxd \
+  ifuse \
+  gvfs-afc \
   linux-headers \
   dkms \
   fwupd \
