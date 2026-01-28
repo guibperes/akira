@@ -18,7 +18,6 @@ set -gx EDITOR nvim
 # Aliases
 alias l="la"
 alias spotify="spotify_player"
-alias calendar="calcure"
 alias tt="taskwarrior-tui"
 alias rss="eilmeldung"
 alias nv="nvim ."
