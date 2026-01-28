@@ -11,6 +11,7 @@ cp $AKIRA_DIR_PATH/assets/akira_wallpaper.jpg $HOME/Pictures/wallpapers
 
 echo -e "# Copying root files with sudo"
 sudo cp -r $AKIRA_CONFIG_PATH/sleep.conf.d /etc/systemd
+sudo cp $AKIRA_CONFIG_PATH/ly.ini /etc/ly/config.ini
 
 echo -e "# Applying configurations"
 sudo usermod -aG docker $USER
