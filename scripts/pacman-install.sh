@@ -81,7 +81,6 @@ sudo pacman -S --noconfirm \
   gnome-firmware \
   fragments \
   handbrake \
-  secrets \
   loupe \
   nwg-look \
   zathura \
