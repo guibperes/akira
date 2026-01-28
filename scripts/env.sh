@@ -11,7 +11,3 @@ export YAY_URL=https://aur.archlinux.org/yay.git
 export YAY_DIR=/tmp/yay
 
 export GIT_URL_LAZYVIM=https://github.com/guibperes/akira-lazyvim
-# GIT_URL_AKIRA_GTK=https://github.com/guibperes/akira-gtk-theme
-
-export GIT_USER_NAME="Guilherme Beidaki Peres"
-export GIT_USER_EMAIL="guibperes@proton.me"

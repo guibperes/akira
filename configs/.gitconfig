@@ -1,0 +1,14 @@
+[user]
+	email = guibperes@proton.me
+	name = Guilherme Beidaki Peres
+[alias]
+	a = add
+	ps = push
+	pl = pull
+	l = log
+	c = commit -m
+	s = status
+	co = checkout
+	b = branch
+[commit]
+	gpgSign = true
