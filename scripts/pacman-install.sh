@@ -5,6 +5,7 @@ sudo cp $AKIRA_CONFIG_PATH/pacman.conf /etc/pacman.conf
 sudo pacman -Syu --noconfirm
 sudo pacman -S --noconfirm \
   libimobiledevice \
+  gnupg \
   usbmuxd \
   ifuse \
   gvfs-afc \
