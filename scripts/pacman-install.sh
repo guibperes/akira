@@ -63,6 +63,7 @@ sudo pacman -S --noconfirm \
   bluetui \
   btop \
   amdgpu_top \
+  lazygit \
   task \
   taskwarrior-tui \
   docker \
