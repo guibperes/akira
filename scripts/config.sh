@@ -5,7 +5,6 @@ cp -r $AKIRA_CONFIG_PATH/home_config/. $HOME_CONFIG_PATH
 cp -r \
   $AKIRA_CONFIG_PATH/.gnupg \
   $AKIRA_CONFIG_PATH/.XCompose \
-  $AKIRA_CONFIG_PATH/.gitconfig \
   $HOME
 
 sed -i \
