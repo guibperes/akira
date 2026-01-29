@@ -9,7 +9,11 @@
 
 window#waybar {
   background-color: @background;
-  padding: 10px;
+  border: 1px solid @white;
+}
+
+#workspaces {
+  margin: 5px;
 }
 
 #workspaces button {
@@ -41,7 +45,8 @@ window#waybar {
 #clock,
 #mpris,
 #custom-notifications {
-  padding: 0 15px;
+  padding: 0 12px;
+  margin: 5px;
 }
 
 #clock:hover,
