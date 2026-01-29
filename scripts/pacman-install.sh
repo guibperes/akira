@@ -29,8 +29,8 @@ sudo pacman -S --noconfirm \
   exfat-utils \
   flatpak \
   hyprpolkitagent \
-  hyprpaper \
   hyprlock \
+  swww \
   waybar \
   wofi \
   kanshi \
