@@ -31,7 +31,19 @@
   },
   "clock": {
     "format": "{:L%A %d %B %H:%M}",
-    "on-click": "kitty --class=Calendar -e akira-calendar"
+    "on-click": "kitty --class=Calendar -e akira-calendar",
+    "tooltip-format": "{calendar}",
+    "calendar": {
+      "mode": "year",
+      "mode-mon-col": 3,
+      "format": {
+        "months": "<span color='#E0AF68'><b>{}</b></span>",
+        "days": "<span color='#C0CAF5'><b>{}</b></span>",
+        "weeks": "<span color='#9ECE6A'><b>W{}</b></span>",
+        "weekdays": "<span color='#E5C07B'><b>{}</b></span>",
+        "today": "<span color='#F7768E'><b><u>{}</u></b></span>"
+      }
+    }
   },
   "cpu": {
     "interval": 5,
