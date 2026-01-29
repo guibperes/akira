@@ -3,7 +3,6 @@
 export AKIRA_DIR_NAME=.akira
 export AKIRA_DIR_PATH=$HOME/$AKIRA_DIR_NAME
 export AKIRA_CONFIG_PATH=$AKIRA_DIR_PATH/configs
-export AKIRA_PKG_PATH=$AKIRA_DIR_PATH/packages
 
 export HOME_CONFIG_PATH=$HOME/.config
 
