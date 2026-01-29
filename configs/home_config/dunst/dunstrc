@@ -114,4 +114,14 @@
     offset = 0
     origin = bottom-center
     timeout = 2
+    urgency = low
+
+[brightness]
+    appname = Brightness
+    history_ignore = yes
+    layer = overlay
+    offset = 0
+    origin = bottom-center
+    timeout = 2
+    urgency = low
 

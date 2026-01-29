@@ -2,9 +2,9 @@
 
 OPERATION_TYPE=$1 #volume-up, volume-down, volume-toggle, mic-toggle, play-next, play-prev, play-pause
 
-volume_notify () {
+volume_notify() {
   VOLUME_VALUE=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | sed 's/[^0-9.]*//g' | awk '{print $1 * 100}')
-  dunstify -a "Volume" -u low -r 1001 -h int:value:$VOLUME_VALUE -i audio-volume-high "Volume"
+  dunstify -a "Volume" -r 1001 -h int:value:$VOLUME_VALUE -i audio-volume-high "Volume"
 }
 
 case "$OPERATION_TYPE" in

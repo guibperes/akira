@@ -2,12 +2,19 @@
 
 OPERATION_TYPE=$1 # up, down
 
+brightness_notify() {
+  VALUE=$(brightnessctl -m | grep -oP ",\K[^,]*%" | tr -d %)
+  dunstify -a "Brightness" -r 1001 -h int:value:$VALUE -i brightness "Brightness"
+}
+
 case "$OPERATION_TYPE" in
 up)
   brightnessctl set 5%+
+  brightness_notify
   ;;
 down)
   brightnessctl set 5%-
+  brightness_notify
   ;;
 *)
   echo "Unknow operation type"
