@@ -1,5 +1,3 @@
-@import url("/home/guilherme/.config/akira_style/style.css");
-
 window {
   background-color: @background;
   color: @white;

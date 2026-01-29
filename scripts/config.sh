@@ -6,6 +6,8 @@ mkdir -p $HOME/Pictures/wallpapers
 cp -r $AKIRA_CONFIG_PATH/home_config/. $HOME_CONFIG_PATH
 cp -r $AKIRA_CONFIG_PATH/.gnupg $HOME
 
+sed -i "1i @import url(\"$AKIRA_CONFIG_PATH/akira_style/style.css\");" $AKIRA_CONFIG_PATH/wofi/style.css
+
 cp $AKIRA_CONFIG_PATH/.XCompose $AKIRA_CONFIG_PATH/.gitconfig $HOME
 cp $AKIRA_DIR_PATH/assets/akira_wallpaper.jpg $HOME/Pictures/wallpapers
 
