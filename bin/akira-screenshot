@@ -7,11 +7,12 @@ area)
   grim -g "$(slurp)" - | wl-copy
   ;;
 window)
-  hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at([1]) \(.size[0])x(.size[1])"' | grim -g -
+  WINDOW=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
+  grim -g "$WINDOW" - | wl-copy
   ;;
 monitor)
-  MONITOR="$(hyprctl activeworkspace -j | jq -r .monitor)"
-  grim -o $MONITOR - | wl-copy
+  MONITOR=$(hyprctl activeworkspace -j | jq -r .monitor)
+  grim -o "$MONITOR" - | wl-copy
   ;;
 *)
   grim - | wl-copy
