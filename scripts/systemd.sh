@@ -9,5 +9,3 @@ sudo systemctl enable --now \
   avahi-daemon \
   avahi-dnsconfd \
   NetworkManager
-
-systemctl --user enable --now ssh-agent.service
