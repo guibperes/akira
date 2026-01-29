@@ -31,6 +31,7 @@ sudo pacman -S --noconfirm \
   hyprpolkitagent \
   hyprlock \
   swww \
+  wf-recorder \
   waybar \
   wofi \
   kanshi \

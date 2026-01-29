@@ -1,0 +1,17 @@
+#!/bin/bash
+
+ACTION=$1 # record, stop
+
+case $ACTION in
+record)
+  VIDEOS_DIR=$(xdg-user-dir VIDEOS)
+  FILENAME="$(date +"%Y_%m_%d_%H_%M_%S")_screenrecord.mkv"
+
+  notify-send "Starting screenrecord..."
+  wf-recorder -f "$VIDEOS_DIR/$FILENAME"
+  ;;
+stop)
+  pkill -INT wf-recorder
+  notify-send "Stopping screenrecord..."
+  ;;
+esac
