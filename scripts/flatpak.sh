@@ -9,5 +9,4 @@ flatpak install --noninteractive -y flathub \
   com.discordapp.Discord \
   org.gimp.GIMP \
   md.obsidian.Obsidian \
-  io.gitlab.news_flash.NewsFlash \
   org.localsend.localsend_app
