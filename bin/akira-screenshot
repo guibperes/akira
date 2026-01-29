@@ -15,6 +15,7 @@ monitor)
   grim -o "$MONITOR" - | wl-copy
   ;;
 *)
-  grim - | wl-copy
+  echo "Unknow operation type"
+  exit 1
   ;;
 esac

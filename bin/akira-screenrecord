@@ -14,4 +14,8 @@ stop)
   pkill -INT wf-recorder
   notify-send "Stopping screenrecord..."
   ;;
+*)
+  echo "Unknow operation type"
+  exit 1
+  ;;
 esac
