@@ -12,13 +12,9 @@ sudo pacman -S --noconfirm \
   linux-headers \
   dkms \
   fwupd \
-  iwd \
-  networkmanager \
   nmap \
   wavemon \
   mtr \
-  cups \
-  avahi \
   gst-plugins-ugly \
   gst-plugins-good \
   gst-plugins-base \
@@ -39,16 +35,13 @@ sudo pacman -S --noconfirm \
   kitty \
   fish \
   starship \
-  git \
   curl \
-  less \
   jq \
   zip \
   ffmpeg \
   mpv \
   mpv-mpris \
   yt-dlp \
-  neovim \
   fastfetch \
   spotify-player \
   pass \
@@ -62,7 +55,6 @@ sudo pacman -S --noconfirm \
   brightnessctl \
   bluetui \
   btop \
-  amdgpu_top \
   lazygit \
   task \
   taskwarrior-tui \
