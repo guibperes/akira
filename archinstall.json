@@ -1,4 +1,14 @@
 {
+  "version": "3.0.15",
+  "archinstall-language": "English",
+  "hostname": "archlinux",
+  "timezone": "UTC",
+  "ntp": true,
+  "parallel_downloads": 0,
+  "script": null,
+  "auth_config": {},
+  "custom_commands": [],
+  "services": [],
   "app_config": {
     "audio_config": {
       "audio": "pipewire"
@@ -13,15 +23,11 @@
       "enabled": true
     }
   },
-  "archinstall-language": "English",
-  "auth_config": {},
   "bootloader_config": {
     "bootloader": "Systemd-boot",
     "removable": false,
     "uki": false
   },
-  "custom_commands": [],
-  "hostname": "archlinux",
   "kernels": [
     "linux"
   ],
@@ -39,12 +45,6 @@
   "network_config": {
     "type": "nm_iwd"
   },
-  "ntp": true,
-  "packages": [
-    "git",
-    "neovim"
-  ],
-  "parallel_downloads": 0,
   "profile_config": {
     "gfx_driver": "All open-source",
     "greeter": "ly",
@@ -60,12 +60,12 @@
       "main": "Desktop"
     }
   },
-  "script": null,
-  "services": [],
   "swap": {
     "algorithm": "zstd",
     "enabled": true
   },
-  "timezone": "UTC",
-  "version": "3.0.15"
+  "packages": [
+    "git",
+    "neovim"
+  ]
 }
