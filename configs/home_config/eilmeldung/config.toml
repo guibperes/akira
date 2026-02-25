@@ -9,6 +9,9 @@ keep_articles_days = 999
 sync_every_minutes = 15
 startup_commands = ["sync", "focus articles"]
 
+audio_enclosure_command = "mpv {url}"
+video_enclosure_command = "mpv {url}"
+
 feed_list = [
   'query: "Today Unread" today unread',
   "feeds",
