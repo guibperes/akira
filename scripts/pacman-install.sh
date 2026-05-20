@@ -27,7 +27,7 @@ sudo pacman -S --noconfirm \
   hyprpolkitagent \
   hyprlock \
   hyprshutdown \
-  swww \
+  awww \
   wf-recorder \
   waybar \
   wofi \
