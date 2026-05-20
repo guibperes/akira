@@ -26,6 +26,7 @@ sudo pacman -S --noconfirm \
   flatpak \
   hyprpolkitagent \
   hyprlock \
+  hyprshutdown \
   swww \
   wf-recorder \
   waybar \
@@ -53,6 +54,7 @@ sudo pacman -S --noconfirm \
   wiremix \
   playerctl \
   brightnessctl \
+  power-profiles-daemon \
   bluetui \
   btop \
   lazygit \
