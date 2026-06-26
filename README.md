@@ -41,10 +41,6 @@ The Akira visual identity blends **modern minimalism** with **cyberpunk underton
 | **Yellow** | `#E5C07B` | rgba(229,192,123,1) |
 | **Border** | `#414868` | rgba(65,72,104,1) |
 
-### 🚀 Getting Started
-
-Install instructions...
-
 ### 📜 License
 
 This project is distributed under the **MIT License** — feel free to fork, adapt, and build upon Akira.
