@@ -1,0 +1,11 @@
+hl.workspace_rule({ workspace = "1", monitor = "desc:LG Electronics 27GN7 0x00008E27", default = true })
+hl.workspace_rule({ workspace = "2", monitor = "desc:LG Electronics 27GN7 0x00008E27" })
+hl.workspace_rule({ workspace = "3", monitor = "desc:LG Electronics 27GN7 0x00008E27" })
+hl.workspace_rule({ workspace = "4", monitor = "desc:LG Electronics 27GN7 0x00008E27" })
+hl.workspace_rule({ workspace = "5", monitor = "desc:LG Electronics 27GN7 0x00008E27" })
+
+hl.workspace_rule({ workspace = "6", monitor = "desc:AOC 2460G5 0x00000B61", default = true })
+hl.workspace_rule({ workspace = "7", monitor = "desc:AOC 2460G5 0x00000B61" })
+hl.workspace_rule({ workspace = "8", monitor = "desc:AOC 2460G5 0x00000B61" })
+hl.workspace_rule({ workspace = "9", monitor = "desc:AOC 2460G5 0x00000B61" })
+hl.workspace_rule({ workspace = "0", monitor = "desc:AOC 2460G5 0x00000B61" })
