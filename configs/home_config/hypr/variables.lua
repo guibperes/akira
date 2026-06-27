@@ -1,0 +1,9 @@
+return {
+  mainMod = "SUPER",
+
+  -- Applications
+  terminal = "kitty",
+  fileManager = "nautilus",
+  browser = "chromium",
+  menu = "wofi",
+}
