@@ -75,6 +75,7 @@ sudo pacman -S --noconfirm \
   papers \
   gnome-font-viewer \
   gnome-firmware \
+  gnome-disk-utility \
   fragments \
   handbrake \
   loupe \
