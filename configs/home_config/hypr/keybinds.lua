@@ -29,7 +29,7 @@ hl.bind(config.mainMod .. "+ J", hl.dsp.focus({ direction = "down" }))
 for i = 1, 10 do
   local key = i % 10
   hl.bind(config.mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
-  hl.bind(config.mainMod .. " + SHIFT + " .. key, hl.dsp.focus({ workspace = i }))
+  hl.bind(config.mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
 -- Audio
