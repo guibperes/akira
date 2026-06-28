@@ -7,6 +7,6 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("waybar")
   hl.exec_cmd("kanshi")
 
-  hl.exec_cmd(config.browser, { workspace = "1 silent" })
-  hl.exec_cmd("kitty eilmeldung", { workspace = "6 silent" })
+  hl.exec_cmd(config.browser, { workspace = "1" })
+  hl.exec_cmd("kitty eilmeldung", { workspace = "6" })
 end)
