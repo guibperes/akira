@@ -8,6 +8,7 @@ content_preferred_type = "markdown"
 keep_articles_days = 999
 sync_every_minutes = 15
 startup_commands = ["sync", "focus articles"]
+notify_after_sync = false
 
 audio_enclosure_command = "mpv {url}"
 video_enclosure_command = "mpv {url}"
@@ -19,12 +20,10 @@ feed_list = [
 ]
 
 share_targets = [
-  "clipboard",
-  "mpv mpv {url}"
+  "clipboard"
 ]
 
 [input_config.mappings]
 "q" = ["quit"]
-"r" = ["read", "nextunread"]
 "S m" = ["share mpv"]
 
