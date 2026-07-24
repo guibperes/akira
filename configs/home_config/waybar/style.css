@@ -43,7 +43,7 @@ window#waybar {
 #temperature,
 #privacy,
 #clock,
-#mpris,
+#custom-mpris,
 #custom-notifications {
   padding: 0 12px;
   margin: 5px;
@@ -58,7 +58,7 @@ window#waybar {
 #memory:hover,
 #temperature:hover,
 #gamemode:hover,
-#mpris:hover,
+#custom-mpris:hover,
 #custom-notifications:hover {
   background: @gray;
   border-radius: 0px;
@@ -68,10 +68,10 @@ window#waybar {
   background: none;
 }
 
-#mpris.playing {
+#custom-mpris.playing {
   color: @green;
 }
 
-#mpris.paused {
+#custom-mpris.paused {
   color: @yellow;
 }

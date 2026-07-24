@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# akira-mpris - waybar custom module with a scrolling media title
+#
+# Waybar has no built in scrolling, so this renders a moving window over the
+# title instead of truncating it. It writes one JSON object per line and never
+# exits, so the module must be declared with "return-type": "json" and without
+# an "interval".
+
+# Substring expansion has to count characters, not bytes
+export LC_ALL=C.UTF-8
+
+# Command line environment wins over the config file, so quick tests like
+# `WIDTH=25 DELAY=0.15 akira-mpris` keep working
+ENV_WIDTH="$WIDTH"
+ENV_DELAY="$DELAY"
+ENV_GAP="$GAP"
+ENV_POLL_FRAMES="$POLL_FRAMES"
+
+# Defaults, overridden by the config file below
+WIDTH=35           # visible characters of the title
+DELAY=0.25         # seconds between frames
+POLL_FRAMES=4      # query playerctl every N frames
+GAP="  ·  "        # separator between the end and the restart
+IGNORED_PLAYERS="" # comma separated, passed to playerctl
+PAUSED_ICON=""
+declare -A PLAYER_ICONS=([default]="")
+
+CONFIG_FILE="${MPRIS_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/waybar/mpris.conf}"
+
+if [ -r "$CONFIG_FILE" ]; then
+  # A syntax error here would kill the module silently, so check first
+  if bash -n "$CONFIG_FILE" 2>/dev/null; then
+    source "$CONFIG_FILE"
+  else
+    echo "akira-mpris: syntax error in $CONFIG_FILE, using defaults" >&2
+  fi
+fi
+
+WIDTH="${ENV_WIDTH:-$WIDTH}"
+DELAY="${ENV_DELAY:-$DELAY}"
+GAP="${ENV_GAP:-$GAP}"
+POLL_FRAMES="${ENV_POLL_FRAMES:-$POLL_FRAMES}"
+
+# Field separator for the playerctl template, chosen so it cannot show up
+# inside a title
+SEP=$'\x1f'
+
+json_escape() {
+  local text="$1"
+  text=${text//\\/\\\\}
+  text=${text//\"/\\\"}
+  printf '%s' "$text"
+}
+
+emit() {
+  printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' \
+    "$(json_escape "$1")" "$(json_escape "$2")" "$3"
+}
+
+query() {
+  playerctl --ignore-player="$IGNORED_PLAYERS" metadata --format \
+    "{{status}}${SEP}{{playerName}}${SEP}{{duration(position)}}${SEP}{{duration(mpris:length)}}${SEP}{{title}}" \
+    2>/dev/null
+}
+
+frame=0
+offset=0
+previous=""
+status=""
+player=""
+position=""
+length=""
+title=""
+
+while true; do
+  if ((frame % POLL_FRAMES == 0)); then
+    IFS="$SEP" read -r status player position length title <<<"$(query)"
+  fi
+
+  frame=$((frame + 1))
+
+  # No player, or nothing loaded: empty text hides the module
+  if [ -z "$status" ] || [ "$status" = "Stopped" ]; then
+    emit "" "" "stopped"
+    sleep "$DELAY"
+    continue
+  fi
+
+  if [ "$status" = "Paused" ]; then
+    icon="$PAUSED_ICON"
+    class="paused"
+  else
+    icon="${PLAYER_ICONS[$player]:-${PLAYER_ICONS[default]}}"
+    class="playing"
+  fi
+
+  # Restart the scroll whenever the track changes
+  if [ "$title" != "$previous" ]; then
+    previous="$title"
+    offset=0
+  fi
+
+  if ((${#title} <= WIDTH)); then
+    visible="$title"
+  else
+    marquee="$title$GAP"
+    visible="${marquee:offset:WIDTH}"
+
+    # Wrap around: complete the window from the beginning of the title
+    if ((${#visible} < WIDTH)); then
+      visible="$visible${marquee:0:WIDTH-${#visible}}"
+    fi
+
+    # A paused track keeps its position instead of scrolling
+    if [ "$status" = "Playing" ]; then
+      offset=$(((offset + 1) % ${#marquee}))
+    fi
+  fi
+
+  emit "${icon}[${position}/${length}] ${visible}" "$title" "$class"
+  sleep "$DELAY"
+done

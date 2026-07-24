@@ -7,7 +7,7 @@
   "margin": 10,
   "modules-left": [
     "hyprland/workspaces",
-    "mpris"
+    "custom/mpris"
   ],
   "modules-center": [
     "clock"
@@ -170,33 +170,11 @@
       }
     ]
   },
-  "mpris": {
-    "format": "{player_icon} {dynamic}",
-    "format-paused": "{status_icon} {dynamic}",
-    "format-stopped": "{status_icon}",
-    "tooltip-format": "{title}",
-    "title-len": 35,
-    "interval": 1,
-    "dynamic-order": [
-      "position",
-      "length",
-      "title"
-    ],
-    "player-icons": {
-      "default": " ",
-      "playerctld": " ",
-      "chromium": " ",
-      "spotify": " ",
-      "mpv": " ",
-      "vlc": "󰕼 ",
-      "Newsflash": "󰑫 "
-    },
-    "status-icons": {
-      "paused": " ",
-      "playing": " "
-    },
-    "ignored-players": [
-      "discord"
-    ]
+  "custom/mpris": {
+    "format": "{}",
+    "return-type": "json",
+    "exec": "akira-mpris",
+    "escape": true,
+    "on-click": "akira-audio play-pause"
   }
 }
