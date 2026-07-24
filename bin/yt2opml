@@ -1,0 +1,165 @@
+#!/usr/bin/env bash
+#
+# yt2opml.sh - build an OPML file with the video and livestream feeds of
+#              YouTube channels, with no shorts, under a "YouTube" category.
+#
+# Usage:
+#   ./yt2opml.sh URL [URL...]            > youtube.opml
+#   ./yt2opml.sh -o youtube.opml URL...
+#   cat channels.txt | ./yt2opml.sh      > youtube.opml
+#
+# Accepted input:
+#   https://www.youtube.com/feeds/videos.xml?channel_id=UCxxxx
+#   https://www.youtube.com/channel/UCxxxx
+#   UCxxxx
+#
+# Options:
+#   -o FILE      write to FILE instead of standard output
+#   -n           no network; use the channel ID itself as the channel name
+#   -c NAME      category name (default: YouTube)
+#   -h           this help
+
+set -euo pipefail
+
+OUT=""
+FETCH=1
+CATEGORY="YouTube"
+
+usage() {
+  awk 'NR>1 { if ($0 !~ /^#/) exit; sub(/^# ?/, ""); print }' "$0"
+  exit "${1:-0}"
+}
+
+while getopts ":o:nc:h" opt; do
+  case "$opt" in
+  o) OUT="$OPTARG" ;;
+  n) FETCH=0 ;;
+  c) CATEGORY="$OPTARG" ;;
+  h) usage 0 ;;
+  :)
+    echo "error: -$OPTARG requires an argument" >&2
+    exit 2
+    ;;
+  \?)
+    echo "error: invalid option -$OPTARG" >&2
+    exit 2
+    ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+if [ "$FETCH" -eq 1 ] && ! command -v curl >/dev/null 2>&1; then
+  echo "warning: curl not found; continuing without looking up channel names" >&2
+  FETCH=0
+fi
+
+# --- input: arguments and/or stdin -------------------------------------------
+inputs=()
+if [ "$#" -gt 0 ]; then
+  # URLs given as arguments; stdin is ignored
+  for arg in "$@"; do inputs+=("$arg"); done
+elif [ ! -t 0 ]; then
+  # no arguments: read the list from stdin (one channel per line, # = comment)
+  while IFS= read -r line || [ -n "$line" ]; do
+    line="${line%%#*}"
+    line="$(printf '%s' "$line" | tr -d '[:space:]')"
+    [ -n "$line" ] && inputs+=("$line")
+  done
+else
+  echo "error: no URL given" >&2
+  usage 2
+fi
+
+if [ "${#inputs[@]}" -eq 0 ]; then
+  echo "error: no valid URL in the input" >&2
+  exit 2
+fi
+
+# --- helpers ------------------------------------------------------------------
+extract_id() {
+  # print the UC... found in the string, or nothing
+  printf '%s' "$1" | grep -oE 'UC[A-Za-z0-9_-]{22}' | head -n1 || true
+}
+
+xml_escape() {
+  printf '%s' "$1" | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' \
+    -e 's/"/\&quot;/g' -e "s/'/\&apos;/g"
+}
+
+xml_unescape() {
+  printf '%s' "$1" | sed -e 's/&lt;/</g' -e 's/&gt;/>/g' -e 's/&quot;/"/g' \
+    -e "s/&#39;/'/g" -e 's/&apos;/'"'"'/g' -e 's/&amp;/\&/g'
+}
+
+channel_title() {
+  # look up the <title> of the channel feed; return empty on failure
+  local id="$1" xml title
+  xml="$(curl -fsSL --max-time 15 \
+    "https://www.youtube.com/feeds/videos.xml?channel_id=${id}" 2>/dev/null)" || return 0
+  title="$(printf '%s' "$xml" | tr -d '\n' |
+    grep -oE '<title>[^<]*</title>' | head -n1 |
+    sed -e 's|<title>||' -e 's|</title>||' || true)"
+  xml_unescape "$title"
+}
+
+emit_outline() {
+  # $1 already-escaped title, $2 feed URL, $3 channel ID
+  printf '    <outline text="%s" type="rss" xmlUrl="%s" htmlUrl="https://www.youtube.com/channel/%s" title="%s"/>\n' \
+    "$1" "$2" "$3" "$1"
+}
+
+# --- body ---------------------------------------------------------------------
+body=""
+count=0
+for raw in "${inputs[@]}"; do
+  id="$(extract_id "$raw")"
+  if [ -z "$id" ]; then
+    echo "warning: no channel ID recognized, skipping: $raw" >&2
+    continue
+  fi
+
+  name=""
+  if [ "$FETCH" -eq 1 ]; then
+    name="$(channel_title "$id")"
+    [ -z "$name" ] && echo "warning: could not get the name of $id; using the ID instead" >&2
+  fi
+  [ -z "$name" ] && name="$id"
+
+  suffix="${id#UC}" # the rest of the ID, shared by every auto-generated playlist
+  base="https://www.youtube.com/feeds/videos.xml?playlist_id="
+
+  t_vid="$(xml_escape "${name} — Videos")"
+  t_liv="$(xml_escape "${name} — Live")"
+
+  body+="$(emit_outline "$t_vid" "${base}UULF${suffix}" "$id")"$'\n'
+  body+="$(emit_outline "$t_liv" "${base}UULV${suffix}" "$id")"$'\n'
+  count=$((count + 1))
+done
+
+if [ "$count" -eq 0 ]; then
+  echo "error: no valid channel processed" >&2
+  exit 1
+fi
+
+cat_esc="$(xml_escape "$CATEGORY")"
+
+opml="$(
+  cat <<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head><title>${cat_esc} — videos and live streams (no shorts)</title></head>
+  <body>
+  <outline text="${cat_esc}" title="${cat_esc}">
+${body}  </outline>
+  </body>
+</opml>
+XML
+)"
+
+if [ -n "$OUT" ]; then
+  printf '%s\n' "$opml" >"$OUT"
+  echo "done: $count channel(s), $((count * 2)) feeds written to $OUT" >&2
+else
+  printf '%s\n' "$opml"
+  echo "done: $count channel(s), $((count * 2)) feeds" >&2
+fi
