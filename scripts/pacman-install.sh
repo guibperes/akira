@@ -31,7 +31,6 @@ sudo pacman -S --noconfirm \
   wf-recorder \
   waybar \
   wofi \
-  kanshi \
   wl-clipboard \
   kitty \
   fish \
