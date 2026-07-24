@@ -1,7 +1,59 @@
-#! /bin/bash
+#!/usr/bin/env bash
+#
+# akira-system-update - update the packages from the official repositories and
+#                       the AUR, then the flatpak applications.
+#
+# Each step is reported at the end, so a failure in one does not hide the
+# result of the others.
+#
+# Usage:
+#   akira-system-update [-p] [-f]
+#
+# Options:
+#   -p    only the pacman and AUR packages
+#   -f    only the flatpak applications
+#   -h    this help
 
-echo -e "# Yay full system update"
-yay
+set -uo pipefail
 
-echo -e "# Flatpak update"
-flatpak update
+DO_PACKAGES=1
+DO_FLATPAK=1
+FAILED=()
+
+usage() {
+  awk 'NR>1 { if ($0 !~ /^#/) exit; sub(/^# ?/, ""); print }' "$0"
+  exit "${1:-0}"
+}
+
+while getopts ":pfh" opt; do
+  case "$opt" in
+  p) DO_FLATPAK=0 ;;
+  f) DO_PACKAGES=0 ;;
+  h) usage 0 ;;
+  \?)
+    echo "error: invalid option -$OPTARG" >&2
+    usage 2
+    ;;
+  esac
+done
+
+if [ "$DO_PACKAGES" -eq 1 ]; then
+  echo "# Yay full system update"
+  yay || FAILED+=("yay")
+fi
+
+if [ "$DO_FLATPAK" -eq 1 ]; then
+  echo "# Flatpak update"
+  if command -v flatpak >/dev/null 2>&1; then
+    flatpak update || FAILED+=("flatpak")
+  else
+    echo "flatpak is not installed, skipping" >&2
+  fi
+fi
+
+if [ "${#FAILED[@]}" -gt 0 ]; then
+  echo "# Finished with failures: ${FAILED[*]}" >&2
+  exit 1
+fi
+
+echo "# Finished"

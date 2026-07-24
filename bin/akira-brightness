@@ -1,23 +1,53 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# akira-brightness - change the display backlight, with an OSD notification.
+#
+# Usage:
+#   akira-brightness OPERATION
+#
+# Operations:
+#   up      raise the backlight by 5%
+#   down    lower the backlight by 5%
+#   get     print the current percentage and exit
+#
+# Options:
+#   -h      this help
 
-OPERATION_TYPE=$1 # up, down
+set -euo pipefail
 
-brightness_notify() {
-  VALUE=$(brightnessctl -m | grep -oP ",\K[^,]*%" | tr -d %)
-  dunstify -a "Brightness" -r 1001 -h int:value:$VALUE -i brightness "Brightness"
+# Same slot as akira-audio: volume and brightness share one OSD
+NOTIFY_ID=1001
+
+usage() {
+  awk 'NR>1 { if ($0 !~ /^#/) exit; sub(/^# ?/, ""); print }' "$0"
+  exit "${1:-0}"
 }
 
-case "$OPERATION_TYPE" in
+current_value() {
+  # brightnessctl -m prints device,class,current,percent,max
+  brightnessctl -m | cut -d, -f4 | tr -d %
+}
+
+brightness_notify() {
+  local value
+  value="$(current_value)"
+  dunstify -a Brightness -r "$NOTIFY_ID" -h "int:value:$value" -i brightness \
+    "Brightness ${value}%"
+}
+
+case "${1:-}" in
 up)
-  brightnessctl set 5%+
+  brightnessctl set 5%+ >/dev/null
   brightness_notify
   ;;
 down)
-  brightnessctl set 5%-
+  brightnessctl set 5%- >/dev/null
   brightness_notify
   ;;
+get) current_value ;;
+-h | --help) usage 0 ;;
 *)
-  echo "Unknow operation type"
-  exit 1
+  echo "error: unknown operation: ${1:-<none>}" >&2
+  usage 2
   ;;
 esac

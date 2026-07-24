@@ -1,27 +1,44 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# akira-notifications - query and control the dunst notification daemon.
+#                       Meant to back the waybar custom/notifications module.
+#
+# Usage:
+#   akira-notifications OPERATION
+#
+# Operations:
+#   pause-toggle   pause or resume notifications
+#   get-paused     print true or false
+#   get-icon       print the bell icon matching the current state
+#   get-waiting    print how many notifications are queued while paused
+#
+# Options:
+#   -h             this help
 
-ACTION=$1 # pause-toggle, get-icon, get-paused
+set -euo pipefail
 
-case "$ACTION" in
-pause-toggle)
-  dunstctl set-paused toggle
-  ;;
-get-paused)
-  dunstctl is-paused
-  ;;
+ICON_ENABLED="󰂚"
+ICON_DISABLED="󰂛"
+
+usage() {
+  awk 'NR>1 { if ($0 !~ /^#/) exit; sub(/^# ?/, ""); print }' "$0"
+  exit "${1:-0}"
+}
+
+case "${1:-}" in
+pause-toggle) dunstctl set-paused toggle ;;
+get-paused) dunstctl is-paused ;;
+get-waiting) dunstctl count waiting ;;
 get-icon)
-  ICON_ENABLED="󰂚"
-  ICON_DISABLED="󰂛"
-  IS_PAUSED=$(dunstctl is-paused)
-
-  if [[ $IS_PAUSED == "true" ]]; then
-    echo $ICON_DISABLED
+  if [ "$(dunstctl is-paused)" = "true" ]; then
+    printf '%s\n' "$ICON_DISABLED"
   else
-    echo $ICON_ENABLED
+    printf '%s\n' "$ICON_ENABLED"
   fi
   ;;
+-h | --help) usage 0 ;;
 *)
-  echo "Unknow operation type"
-  exit 1
+  echo "error: unknown operation: ${1:-<none>}" >&2
+  usage 2
   ;;
 esac

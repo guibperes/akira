@@ -1,21 +1,81 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# akira-screenshot - capture the screen to the clipboard, and optionally to a
+#                    file under the XDG pictures directory.
+#
+# Usage:
+#   akira-screenshot [-f] TARGET
+#
+# Targets:
+#   area      select a region with slurp
+#   window    the currently focused window
+#   monitor   the monitor holding the active workspace
+#
+# Options:
+#   -f        also save a PNG next to the clipboard copy
+#   -h        this help
 
-SCREENSHOT_TYPE=$1 # area, window, monitor
+set -euo pipefail
 
-case $SCREENSHOT_TYPE in
+SAVE=0
+
+usage() {
+  awk 'NR>1 { if ($0 !~ /^#/) exit; sub(/^# ?/, ""); print }' "$0"
+  exit "${1:-0}"
+}
+
+fail() {
+  notify-send -a Screenshot "Screenshot failed" "$1"
+  echo "error: $1" >&2
+  exit 1
+}
+
+while getopts ":fh" opt; do
+  case "$opt" in
+  f) SAVE=1 ;;
+  h) usage 0 ;;
+  \?)
+    echo "error: invalid option -$OPTARG" >&2
+    usage 2
+    ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+case "${1:-}" in
 area)
-  grim -g "$(slurp)" - | wl-copy
+  # slurp exits non-zero when the selection is cancelled; without this check
+  # grim would be handed an empty geometry and the clipboard clobbered
+  GEOMETRY="$(slurp)" || exit 0
+  [ -n "$GEOMETRY" ] || exit 0
+  ARGS=(-g "$GEOMETRY")
   ;;
 window)
-  WINDOW=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
-  grim -g "$WINDOW" - | wl-copy
+  GEOMETRY="$(hyprctl activewindow -j |
+    jq -er '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')" ||
+    fail "no focused window"
+  ARGS=(-g "$GEOMETRY")
   ;;
 monitor)
-  MONITOR=$(hyprctl activeworkspace -j | jq -r .monitor)
-  grim -o "$MONITOR" - | wl-copy
+  MONITOR="$(hyprctl activeworkspace -j | jq -er .monitor)" ||
+    fail "could not resolve the active monitor"
+  ARGS=(-o "$MONITOR")
   ;;
+-h | --help) usage 0 ;;
 *)
-  echo "Unknow operation type"
-  exit 1
+  echo "error: unknown target: ${1:-<none>}" >&2
+  usage 2
   ;;
 esac
+
+if [ "$SAVE" -eq 1 ]; then
+  DIR="$(xdg-user-dir PICTURES)"
+  FILE="$DIR/$(date +%Y_%m_%d_%H_%M_%S)_screenshot.png"
+
+  mkdir -p "$DIR"
+  grim "${ARGS[@]}" "$FILE" || fail "grim could not capture the screen"
+  wl-copy <"$FILE"
+  notify-send -a Screenshot "Screenshot saved" "$FILE"
+else
+  grim "${ARGS[@]}" - | wl-copy
+fi

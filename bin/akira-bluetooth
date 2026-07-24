@@ -1,3 +1,28 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# akira-bluetooth - open the bluetooth pairing and connection TUI in the terminal.
+#
+# Thin wrapper so keybinds and menus reference a stable name instead of the
+# tool itself, which can then be swapped without touching the Hyprland config.
+#
+# Usage:
+#   akira-bluetooth [ARGS...]
+#
+# Any argument is passed straight through to bluetui.
+#
+# Options:
+#   -h    this help
 
-bluetui
+set -euo pipefail
+
+usage() {
+  awk 'NR>1 { if ($0 !~ /^#/) exit; sub(/^# ?/, ""); print }' "$0"
+  exit "${1:-0}"
+}
+
+case "${1:-}" in
+-h | --help) usage 0 ;;
+esac
+
+# exec replaces this shell instead of leaving it waiting around
+exec bluetui "$@"

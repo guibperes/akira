@@ -1,3 +1,28 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# akira-network - open the network connection TUI in the terminal.
+#
+# Thin wrapper so keybinds and menus reference a stable name instead of the
+# tool itself, which can then be swapped without touching the Hyprland config.
+#
+# Usage:
+#   akira-network [ARGS...]
+#
+# Any argument is passed straight through to nmtui.
+#
+# Options:
+#   -h    this help
 
-nmtui
+set -euo pipefail
+
+usage() {
+  awk 'NR>1 { if ($0 !~ /^#/) exit; sub(/^# ?/, ""); print }' "$0"
+  exit "${1:-0}"
+}
+
+case "${1:-}" in
+-h | --help) usage 0 ;;
+esac
+
+# exec replaces this shell instead of leaving it waiting around
+exec nmtui "$@"

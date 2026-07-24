@@ -1,3 +1,29 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# akira-calendar - show a full year calendar in the pager.
+#
+# Usage:
+#   akira-calendar [YEAR]
+#
+# Without an argument it shows the current year. Any argument is passed
+# straight through to cal, so a year or a month and year both work.
+#
+# Options:
+#   -h    this help
 
-cal -y | less
+set -euo pipefail
+
+usage() {
+  awk 'NR>1 { if ($0 !~ /^#/) exit; sub(/^# ?/, ""); print }' "$0"
+  exit "${1:-0}"
+}
+
+case "${1:-}" in
+-h | --help) usage 0 ;;
+esac
+
+if [ "$#" -gt 0 ]; then
+  cal -y "$@" | less
+else
+  cal -y | less
+fi

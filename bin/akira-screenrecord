@@ -1,21 +1,76 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# akira-screenrecord - record the screen with wf-recorder into the XDG videos
+#                      directory.
+#
+# Usage:
+#   akira-screenrecord OPERATION
+#
+# Operations:
+#   record    start recording, refusing to start a second one
+#   stop      stop the running recording
+#   toggle    start if idle, stop if recording, for a single keybind
+#   status    print recording or idle, and exit 0 or 1 accordingly
+#
+# Options:
+#   -h        this help
 
-ACTION=$1 # record, stop
+set -euo pipefail
 
-case $ACTION in
-record)
-  VIDEOS_DIR=$(xdg-user-dir VIDEOS)
-  FILENAME="$(date +"%Y_%m_%d_%H_%M_%S")_screenrecord.mkv"
+usage() {
+  awk 'NR>1 { if ($0 !~ /^#/) exit; sub(/^# ?/, ""); print }' "$0"
+  exit "${1:-0}"
+}
 
-  notify-send "Starting screenrecord..."
-  wf-recorder -f "$VIDEOS_DIR/$FILENAME"
+is_recording() {
+  pgrep -x wf-recorder >/dev/null 2>&1
+}
+
+start_recording() {
+  local dir file
+
+  if is_recording; then
+    notify-send -a Screenrecord "Already recording"
+    exit 0
+  fi
+
+  dir="$(xdg-user-dir VIDEOS)"
+  file="$dir/$(date +%Y_%m_%d_%H_%M_%S)_screenrecord.mkv"
+  mkdir -p "$dir"
+
+  notify-send -a Screenrecord "Recording started" "$file"
+  # Blocks until stop sends SIGINT, so the keybind should not wait on it
+  wf-recorder -f "$file"
+  notify-send -a Screenrecord "Recording saved" "$file"
+}
+
+stop_recording() {
+  if ! is_recording; then
+    notify-send -a Screenrecord "Nothing is being recorded"
+    exit 0
+  fi
+
+  # SIGINT lets wf-recorder close the container properly; SIGKILL corrupts it
+  pkill -INT -x wf-recorder
+}
+
+case "${1:-}" in
+record) start_recording ;;
+stop) stop_recording ;;
+toggle)
+  if is_recording; then stop_recording; else start_recording; fi
   ;;
-stop)
-  pkill -INT wf-recorder
-  notify-send "Stopping screenrecord..."
+status)
+  if is_recording; then
+    echo recording
+  else
+    echo idle
+    exit 1
+  fi
   ;;
+-h | --help) usage 0 ;;
 *)
-  echo "Unknow operation type"
-  exit 1
+  echo "error: unknown operation: ${1:-<none>}" >&2
+  usage 2
   ;;
 esac

@@ -1,38 +1,82 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# akira-audio - control the default sink, the default source and the current
+#               media player, with an OSD notification for each change.
+#
+# Usage:
+#   akira-audio OPERATION
+#
+# Operations:
+#   volume-up      raise the sink volume by 5%, capped at 100%
+#   volume-down    lower the sink volume by 5%
+#   volume-toggle  mute or unmute the sink
+#   mic-toggle     mute or unmute the source
+#   play-next      skip to the next track
+#   play-prev      skip to the previous track
+#   play-pause     toggle playback
+#
+# Options:
+#   -h             this help
 
-OPERATION_TYPE=$1 #volume-up, volume-down, volume-toggle, mic-toggle, play-next, play-prev, play-pause
+set -euo pipefail
 
-volume_notify() {
-  VOLUME_VALUE=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | sed 's/[^0-9.]*//g' | awk '{print $1 * 100}')
-  dunstify -a "Volume" -r 1001 -h int:value:$VOLUME_VALUE -i audio-volume-high "Volume"
+# Shared slot so repeated presses replace the notification instead of stacking
+NOTIFY_ID=1001
+
+usage() {
+  awk 'NR>1 { if ($0 !~ /^#/) exit; sub(/^# ?/, ""); print }' "$0"
+  exit "${1:-0}"
 }
 
-case "$OPERATION_TYPE" in
+# $1 sink or source, $2 label, $3 icon when active, $4 icon when muted
+device_notify() {
+  local device="$1" label="$2" icon="$3" muted_icon="$4" raw value
+
+  raw="$(wpctl get-volume "$device")"
+  value="$(printf '%s' "$raw" | awk '{ print int($2 * 100) }')"
+
+  if printf '%s' "$raw" | grep -q MUTED; then
+    dunstify -a "$label" -r "$NOTIFY_ID" -i "$muted_icon" "$label muted"
+  else
+    dunstify -a "$label" -r "$NOTIFY_ID" -h "int:value:$value" -i "$icon" \
+      "$label ${value}%"
+  fi
+}
+
+volume_notify() {
+  device_notify @DEFAULT_AUDIO_SINK@ Volume \
+    audio-volume-high audio-volume-muted
+}
+
+mic_notify() {
+  device_notify @DEFAULT_AUDIO_SOURCE@ Microphone \
+    audio-input-microphone audio-input-microphone-muted
+}
+
+case "${1:-}" in
 volume-up)
   wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
   volume_notify
   ;;
 volume-down)
-  wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+  # -l keeps the cap symmetric with volume-up
+  wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%-
   volume_notify
   ;;
 volume-toggle)
   wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+  volume_notify
   ;;
 mic-toggle)
   wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+  mic_notify
   ;;
-play-next)
-  playerctl next
-  ;;
-play-prev)
-  playerctl previous
-  ;;
-play-pause)
-  playerctl play-pause
-  ;;
+play-next) playerctl next ;;
+play-prev) playerctl previous ;;
+play-pause) playerctl play-pause ;;
+-h | --help) usage 0 ;;
 *)
-  echo "Unknow operation type"
-  exit 1
+  echo "error: unknown operation: ${1:-<none>}" >&2
+  usage 2
   ;;
 esac

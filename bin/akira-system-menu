@@ -1,11 +1,55 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# akira-system-menu - wofi menu for the session actions: power off, reboot,
+#                     log out and lock.
+#
+# Depends on hyprshutdown and hyprlock, both installed by
+# scripts/pacman-install.sh.
+#
+# Usage:
+#   akira-system-menu
+#
+# Options:
+#   -h    this help
 
-OPTION=$(printf "Power Off\nReboot\nLogout\nLock" | wofi --dmenu --prompt "System Menu:")
+set -euo pipefail
 
-# TODO: use hyprshutdown whenether is possible to install (AUR or pacman)
+usage() {
+  awk 'NR>1 { if ($0 !~ /^#/) exit; sub(/^# ?/, ""); print }' "$0"
+  exit "${1:-0}"
+}
+
+case "${1:-}" in
+-h | --help) usage 0 ;;
+"") ;;
+*)
+  echo "error: this script takes no arguments" >&2
+  usage 2
+  ;;
+esac
+
+# Bound to a key, so there is no terminal to show a "command not found":
+# report a missing dependency as a notification instead
+for dependency in hyprshutdown hyprlock wofi; do
+  if ! command -v "$dependency" >/dev/null 2>&1; then
+    notify-send -a "System Menu" "Missing dependency" "$dependency is not installed"
+    echo "error: $dependency is not installed" >&2
+    exit 1
+  fi
+done
+
+# wofi exits non-zero when dismissed with Esc
+OPTION="$(printf 'Power Off\nReboot\nLogout\nLock' |
+  wofi --dmenu --prompt 'System Menu:')" || exit 0
+
 case "$OPTION" in
 "Power Off") hyprshutdown -t 'Shutting down...' --post-cmd 'shutdown -P 0' ;;
 "Reboot") hyprshutdown -t 'Restarting...' --post-cmd 'reboot' ;;
 "Logout") hyprshutdown ;;
 "Lock") hyprlock ;;
+"") ;; # menu dismissed without a selection
+*)
+  echo "error: unexpected option: $OPTION" >&2
+  exit 1
+  ;;
 esac
