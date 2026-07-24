@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
-# yt2opml.sh - build an OPML file with the video and livestream feeds of
-#              YouTube channels, with no shorts, under a "YouTube" category.
+# yt2opml - build an OPML file with the video and livestream feeds of
+#           YouTube channels, with no shorts, under a "YouTube" category.
 #
 # Usage:
-#   ./yt2opml.sh URL [URL...]            > youtube.opml
-#   ./yt2opml.sh -o youtube.opml URL...
+#   yt2opml URL [URL...]                 > youtube.opml
+#   yt2opml -o youtube.opml URL...
 #   cat channels.txt | ./yt2opml.sh      > youtube.opml
 #
 # Accepted input:
