@@ -10,7 +10,7 @@ hl.config({
 	general = {
 		gaps_in = 5,
 		gaps_out = 10,
-		border_size = 2,
+		border_size = 1,
 		col = {
 			-- Gradient from the focus blue into magenta, matching the
 			-- active-tab accent used across kitty and waybar.
