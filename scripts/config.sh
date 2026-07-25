@@ -4,6 +4,9 @@ echo -e "# Copying root files with sudo"
 sudo cp -r $AKIRA_CONFIG_PATH/sleep.conf.d /etc/systemd
 sudo cp $AKIRA_CONFIG_PATH/ly.ini /etc/ly/config.ini
 
+echo -e "# LazyVim install"
+git clone git@github.com:guibperes/akira-lazyvim.git $AKIRA_CONFIG_PATH/nvim
+
 echo -e "# Applying configurations"
 sudo usermod -aG docker $USER
 sudo chsh -s /bin/fish $USER
