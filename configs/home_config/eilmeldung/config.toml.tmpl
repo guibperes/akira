@@ -39,28 +39,28 @@ unfocused = "plain"
 # Color palette
 # ─────────────────────────────────────────────────────────────
 [theme.color_palette]
-background = "#1A1B26"
-foreground = "#C0CAF5"
-muted = "#565F89"
+background = "$AKIRA_BG"
+foreground = "$AKIRA_FG"
+muted = "$AKIRA_COMMENT"
 
 # Search matches and yanked items
-highlight = "#E0AF68"
+highlight = "$AKIRA_YELLOW"
 
 # Feeds and focused borders
-accent_primary = "#7AA2F7"
+accent_primary = "$AKIRA_BLUE"
 
 # Categories
-accent_secondary = "#BB9AF7"
+accent_secondary = "$AKIRA_MAGENTA"
 
 # Tags
-accent_tertiary = "#7DCFFF"
+accent_tertiary = "$AKIRA_CYAN"
 
 # Saved queries
-accent_quaternary = "#9ECE6A"
+accent_quaternary = "$AKIRA_GREEN"
 
-info = "#7DCFFF"
-warning = "#E0AF68"
-error = "#F7768E"
+info = "$AKIRA_CYAN"
+warning = "$AKIRA_WARN"
+error = "$AKIRA_ERROR"
 
 # ─────────────────────────────────────────────────────────────
 # Component styles
@@ -70,12 +70,12 @@ error = "#F7768E"
 border = { fg = "muted" }
 border_focused = { fg = "accent_primary" }
 
-statusbar = { fg = "foreground", bg = "#F7768E" }
+statusbar = { fg = "foreground", bg = "$AKIRA_ACCENT" }
 
 header = { fg = "accent_primary", mods = ["bold"] }
 paragraph = { fg = "foreground" }
 article = { fg = "foreground" }
-command_input = { fg = "foreground", bg = "#16161E" }
+command_input = { fg = "foreground", bg = "$AKIRA_BG_DARK" }
 inactive = { fg = "muted" }
 
 tooltip_info = { fg = "info", bg = "background", mods= ["reversed"] }
@@ -83,7 +83,7 @@ tooltip_warning = { fg = "warning", bg = "background", mods= ["reversed"] }
 tooltip_error = { fg = "error", bg = "background", mods= ["reversed"] }
 
 # ── State modifiers, applied additively ──────────────────────
-selected = { bg = "#292E42", mods = ["bold"] }
+selected = { bg = "$AKIRA_HIGHLIGHT", mods = ["bold"] }
 
 unread = { mods = ["bold"] }
 read = { fg = "muted" }
