@@ -5,12 +5,7 @@ playback_format = """
 {status} {track} • {artists} {liked}
 {album} • {genres}
 {metadata}"""
-playback_metadata_fields = [
-    "repeat",
-    "shuffle",
-    "volume",
-    "device",
-]
+playback_metadata_fields = ["repeat", "shuffle", "volume", "device"]
 notify_timeout_in_secs = 0
 tracks_playback_limit = 50
 app_refresh_duration_in_ms = 32
@@ -30,7 +25,7 @@ enable_media_control = true
 enable_streaming = "Always"
 enable_notify = true
 enable_cover_image_cache = true
-default_device = "spotify-player"
+default_device = "spotify-tui"
 notify_streaming_only = false
 seek_duration_secs = 5
 sort_artist_albums_by_type = false
@@ -48,7 +43,7 @@ playlist_percent = 40
 album_percent = 40
 
 [device]
-name = "spotify-player"
+name = "spotify-tui"
 device_type = "speaker"
 volume = 100
 bitrate = 320
