@@ -1,48 +1,86 @@
+/*
+ * Akira アキラ — wofi
+ * configs/wofi/wofi.css
+ *
+ * Static: wofi uses GTK CSS so it consumes the shared
+ * color file directly. No template needed for this app.
+ */
+
 window {
-  background-color: @background;
-  color: @white;
-  border: 2px solid @red;
-  font-family: JetBrainsMono Nerd Font Mono, monospace;
+  font-family: JetBrainsMono Nerd Font, monospace;
   font-size: 14px;
-  font-weight: bold;
+  background-color: @background;
+  border: 1px solid @border;
+  border-radius: 0px;
+}
+
+#outer-box {
+  margin: 0px;
+  padding: 12px;
 }
 
 #input {
-  background-color: @background;
-  color: @white;
-  border: 2px solid @red;
+  margin: 0px 0px 12px 0px;
+  padding: 8px 12px;
+  border: 1px solid @border;
   border-radius: 0px;
-  padding: 5px;
+  background-color: @background_dark;
+  color: @foreground;
 }
 
 #input:focus {
-  border-color: @cyan;
+  border: 1px solid @border_hi;
+}
+
+#input image {
+  color: @comment;
+}
+
+#scroll {
+  margin: 0px;
+  border: none;
+}
+
+#inner-box {
+  margin: 0px;
+  background-color: transparent;
 }
 
 #entry {
+  padding: 8px 12px;
+  border-radius: 0px;
   background-color: transparent;
-  padding: 5px;
-  margin: 10px;
+  color: @foreground_dim;
+}
+
+#entry:hover {
+  background-color: @hover;
+  color: @foreground;
 }
 
 #entry:selected {
-  background-color: @red;
-  border-radius: 0px;
+  background-color: @accent;
+  color: @accent_fg;
+  font-weight: bold;
 }
 
-scrollbar {
-  background-color: @background;
+#text {
+  margin: 0px 0px 0px 8px;
+  color: inherit;
 }
 
-scrollbar slider {
-  background-color: @gray;
-  border-radius: 0px;
+#text:selected {
+  color: @accent_fg;
 }
 
-scrollbar slider:hover {
-  background-color: @gray;
+#img {
+  margin-right: 8px;
 }
 
-image {
-  margin: 10px;
+#unselected {
+  color: @foreground_dim;
+}
+
+#selected {
+  color: @accent_fg;
 }

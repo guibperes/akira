@@ -60,7 +60,7 @@ akira_prune_links() {
 # under version control and symlinked like everything else.
 akira_generate_wofi_style() {
   local dst="$HOME_CONFIG_PATH/wofi/style.css"
-  local colors="$AKIRA_CONFIG_PATH/home_config/akira_style/style.css"
+  local colors="$AKIRA_DIR_PATH/theme/colors.css"
   local rules="$AKIRA_CONFIG_PATH/home_config/wofi/wofi.css"
   local src
 
