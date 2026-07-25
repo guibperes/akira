@@ -1,5 +1,10 @@
 # Akira アキラ
 
+![Akira with apps](docs/screenshot_1.png)
+![Akira with launcher](docs/screenshot_2.png)
+![Akira desktop notification](docs/screenshot_3.png)
+![Akira lockscreen](docs/screenshot_4.png)
+
 **Akira** is a minimal, keyboard-driven Linux environment built on top of **Arch Linux** and the **Hyprland** compositor. It embodies a philosophy of precision, control, and clarity — inspired by the aesthetics of Tokyo Night and the spirit of the word *Akira* (明), which means *bright*, *clear*, or *intelligent* in Japanese.
 
 ### ✨ Vision
