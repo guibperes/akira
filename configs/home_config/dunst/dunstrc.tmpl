@@ -33,9 +33,9 @@
     text_icon_padding = 12
 
     frame_width = 1
-    frame_color = "#414868"
+    frame_color = "$AKIRA_BORDER"
     gap_size = 5
-    highlight = "#F7768E"
+    highlight = "$AKIRA_ACCENT"
 
     separator_color = frame
     sort = yes
@@ -94,23 +94,23 @@
     mouse_right_click = close_current
 
 [urgency_low]
-    background = "#1A1B26"
-    foreground = "#565F89"
-    frame_color = "#414868"
+    background = "$AKIRA_BG"
+    foreground = "$AKIRA_COMMENT"
+    frame_color = "$AKIRA_BORDER"
     timeout = 5
     default_icon = dialog-information
 
 [urgency_normal]
-    background = "#1A1B26"
-    foreground = "#C0CAF5"
-    frame_color = "#414868"
+    background = "$AKIRA_BG"
+    foreground = "$AKIRA_FG"
+    frame_color = "$AKIRA_BORDER"
     timeout = 5
     default_icon = dialog-information
 
 [urgency_critical]
-    background = "#1A1B26"
-    foreground = "#C0CAF5"
-    frame_color = "#F7768E"
+    background = "$AKIRA_BG"
+    foreground = "$AKIRA_FG"
+    frame_color = "$AKIRA_ERROR"
     timeout = 0
     override_pause_level = 60
     default_icon = dialog-error
