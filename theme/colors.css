@@ -32,7 +32,3 @@
 @define-color ok              #9ECE6A;
 @define-color warn            #E0AF68;
 @define-color error           #F7768E;
-
-/* Legacy aliases — drop these once the old CSS is migrated */
-@define-color white           #C0CAF5;
-@define-color gray            #24283B;

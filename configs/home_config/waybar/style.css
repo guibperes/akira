@@ -1,37 +1,53 @@
-@import url("../akira_style/style.css");
+/*
+ * Akira アキラ — waybar
+ * configs/waybar/style.css
+ *
+ * Static: GTK CSS already has variables, so nothing here is
+ * generated. Only the color definitions come from a template.
+ */
+
+@import url("../../.akira/theme/colors.css");
 
 * {
   font-family: JetBrainsMono Nerd Font, monospace;
-  color: @white;
+  color: @foreground;
   font-size: 14px;
   font-weight: bold;
 }
 
 window#waybar {
   background-color: @background;
-  border: 1px solid @white;
+  border: 1px solid @border;
 }
 
+/* ── Workspaces ──────────────────────────────────────────── */
 #workspaces {
   margin: 5px;
 }
 
 #workspaces button {
   background: transparent;
-  color: @white;
+  color: @foreground_dim;
   border-radius: 0px;
   padding: 4px 8px;
 }
 
 #workspaces button:hover {
-  background: @gray;
+  background: @hover;
+  color: @foreground;
 }
 
 #workspaces button.active {
-  background: @red;
-  color: @background;
+  background: @accent;
+  color: @accent_fg;
 }
 
+#workspaces button.urgent {
+  background: @warn;
+  color: @accent_fg;
+}
+
+/* ── Modules ─────────────────────────────────────────────── */
 #tray,
 #gamemode,
 #battery,
@@ -60,7 +76,7 @@ window#waybar {
 #gamemode:hover,
 #custom-mpris:hover,
 #custom-notifications:hover {
-  background: @gray;
+  background: @hover;
   border-radius: 0px;
 }
 
@@ -68,10 +84,37 @@ window#waybar {
   background: none;
 }
 
+/* ── States ──────────────────────────────────────────────── */
 #custom-mpris.playing {
-  color: @green;
+  color: @ok;
 }
 
 #custom-mpris.paused {
-  color: @yellow;
+  color: @warn;
+}
+
+#battery.charging {
+  color: @ok;
+}
+
+#battery.warning {
+  color: @warn;
+}
+
+#battery.critical {
+  color: @error;
+}
+
+#network.disconnected,
+#pulseaudio.muted,
+#bluetooth.off {
+  color: @comment;
+}
+
+#temperature.critical {
+  color: @error;
+}
+
+#custom-notifications.notification {
+  color: @cyan;
 }
