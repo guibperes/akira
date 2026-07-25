@@ -86,7 +86,7 @@ Colors describe pigment; tokens describe intent. Configs reference tokens wherev
 
 Akira has one palette and one generator. Configuration files are either **templates** that get rendered, or **static files** that reference variables the application already supports.
 
-```
+```txt
 .akira/theme/
 └── akira.env            # the palette: single source of truth
 configs/
@@ -110,7 +110,8 @@ Whether a file needs templating depends on one thing: **does it contain a litera
 | Application | Approach | Why |
 | ------------- | ---------- | ----- |
 | **Hyprland** | Generated Lua palette | Lua config reads it with `require` |
-| **hyprlock** | Generated hyprlang colors | `source =` pulls in the variables |
+| **hyprlock** | Static, shared hyprlang colors | `source =` pulls in the generated variables |
+| **hyprtoolkit apps** | Static, shared hyprlang colors | One config themes hyprshutdown, hyprlauncher and friends |
 | **Waybar** | Static, shared GTK colors | GTK CSS has `@define-color` |
 | **wofi** | Static, shared GTK colors | Same color file as Waybar |
 | **kitty** | Full template | No variable support |
@@ -120,7 +121,7 @@ Whether a file needs templating depends on one thing: **does it contain a litera
 | **eilmeldung** | Full template | Theme lives inside `config.toml` |
 | **Neovim** | Generated Lua palette | Loaded at runtime by the colorscheme |
 
-Two notes on the edges of the system. Hyprland moved to Lua configs in 0.55, while the rest of the Hypr ecosystem still runs on hyprlang — where `#` starts a comment, so colors are emitted as `rgba(1a1b26ff)` from automatically derived variants. And the Neovim configuration lives in its own repository, [akira-lazyvim](https://github.com/guibperes/akira-lazyvim), which reads the palette from `~/.akira/theme/palette.lua` and falls back to stock tokyonight when Akira is not installed.
+A few notes on the edges of the system. Hyprland moved to Lua configs in 0.55, while the rest of the Hypr ecosystem still runs on hyprlang — where `#` starts a comment, so colors are emitted as `rgba(1a1b26ff)` from automatically derived variants. Graphical utilities such as hyprshutdown and hyprlauncher are themed through `~/.config/hypr/hyprtoolkit.conf`, a single file covering every app built on the toolkit; it is documented under hyprtoolkit rather than under each application, and does not exist until you create it. And the Neovim configuration lives in its own repository, [akira-lazyvim](https://github.com/guibperes/akira-lazyvim), which reads the palette from `~/.akira/theme/palette.lua` and falls back to stock Tokyo Night when Akira is not installed.
 
 ### 🔧 Changing a Color
 
