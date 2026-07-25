@@ -16,14 +16,23 @@ ENV_WIDTH="$WIDTH"
 ENV_DELAY="$DELAY"
 ENV_GAP="$GAP"
 ENV_POLL_FRAMES="$POLL_FRAMES"
+ENV_BAR_WIDTH="$BAR_WIDTH"
 
 # Defaults, overridden by the config file below
 WIDTH=35           # visible characters of the title
 DELAY=0.25         # seconds between frames
 POLL_FRAMES=4      # query playerctl every N frames
 GAP="  ·  "        # separator between the end and the restart
+BAR_WIDTH=8        # cells in the progress bar, 0 disables it
 IGNORED_PLAYERS="" # comma separated, passed to playerctl
 PAUSED_ICON=""
+
+# Progress bar glyphs. These are box drawing characters, present in
+# JetBrainsMono Nerd Font; override them here if the font ever changes.
+BAR_FILLED="━"
+BAR_KNOB="╸"
+BAR_EMPTY="─"
+
 declare -A PLAYER_ICONS=([default]="")
 
 CONFIG_FILE="${MPRIS_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/waybar/mpris.conf}"
@@ -41,6 +50,7 @@ WIDTH="${ENV_WIDTH:-$WIDTH}"
 DELAY="${ENV_DELAY:-$DELAY}"
 GAP="${ENV_GAP:-$GAP}"
 POLL_FRAMES="${ENV_POLL_FRAMES:-$POLL_FRAMES}"
+BAR_WIDTH="${ENV_BAR_WIDTH:-$BAR_WIDTH}"
 
 # Field separator for the playerctl template, chosen so it cannot show up
 # inside a title
@@ -50,6 +60,12 @@ json_escape() {
   local text="$1"
   text=${text//\\/\\\\}
   text=${text//\"/\\\"}
+  # Raw control characters are invalid inside a JSON string and would make
+  # waybar drop the module without a word. Radio and podcast metadata does
+  # occasionally carry them.
+  text=${text//$'\n'/\\n}
+  text=${text//$'\t'/\\t}
+  text=${text//$'\r'/\\r}
   printf '%s' "$text"
 }
 
@@ -58,10 +74,44 @@ emit() {
     "$(json_escape "$1")" "$(json_escape "$2")" "$3"
 }
 
+# Raw position and length are requested alongside the formatted ones: the
+# formatted values are for the tooltip, the raw microseconds drive the bar.
 query() {
   playerctl --ignore-player="$IGNORED_PLAYERS" metadata --format \
-    "{{status}}${SEP}{{playerName}}${SEP}{{duration(position)}}${SEP}{{duration(mpris:length)}}${SEP}{{title}}${SEP}{{artist}}" \
+    "{{status}}${SEP}{{playerName}}${SEP}{{duration(position)}}${SEP}{{duration(mpris:length)}}${SEP}{{position}}${SEP}{{mpris:length}}${SEP}{{title}}${SEP}{{artist}}" \
     2>/dev/null
+}
+
+# Returns true when the track reports a usable duration. Live streams do not,
+# and neither do players that are still loading a track.
+has_duration() {
+  [[ "$1" =~ ^[0-9]+$ && "$2" =~ ^[0-9]+$ ]] && (($2 > 0))
+}
+
+# Thin progress bar. Emits blank cells of the same width when the duration is
+# unknown, so the module never changes width.
+progress() {
+  local pos=$1 len=$2 width=$3
+
+  ((width > 0)) || return
+  has_duration "$pos" "$len" || {
+    printf '%*s' "$width" ""
+    return
+  }
+
+  ((pos > len)) && pos=$len
+
+  local filled=$((pos * width / len)) i out=""
+  for ((i = 0; i < width; i++)); do
+    if ((i < filled - 1)); then
+      out+="$BAR_FILLED"
+    elif ((i == filled - 1)); then
+      out+="$BAR_KNOB"
+    else
+      out+="$BAR_EMPTY"
+    fi
+  done
+  printf '%s' "$out"
 }
 
 frame=0
@@ -71,12 +121,23 @@ status=""
 player=""
 position=""
 length=""
+pos_raw=""
+len_raw=""
 title=""
 artist=""
 
 while true; do
   if ((frame % POLL_FRAMES == 0)); then
-    IFS="$SEP" read -r status player position length title artist <<<"$(query)"
+    # -d '' instead of the default newline: a title containing a line break
+    # would otherwise truncate the record and silently drop every field
+    # after it. The herestring appends a newline, so trim it back off.
+    IFS="$SEP" read -r -d '' status player position length pos_raw len_raw title artist <<<"$(query)"
+    artist=${artist%$'\n'}
+
+    # Control whitespace inside a title would render as a real line break in
+    # the bar and push the module to two lines
+    title=${title//[$'\n\r\t']/ }
+    artist=${artist//[$'\n\r\t']/ }
   fi
 
   [[ -z "$artist" ]] && display="$title" || display="$title - $artist"
@@ -93,7 +154,9 @@ while true; do
     icon="$PAUSED_ICON"
     class="paused"
   else
-    icon="${PLAYER_ICONS[$player]:-${PLAYER_ICONS[default]}}"
+    # An empty player name is a bad subscript for an associative array and
+    # would spam waybar's log, so fall through to the default key
+    icon="${PLAYER_ICONS[${player:-default}]:-${PLAYER_ICONS[default]}}"
     class="playing"
   fi
 
@@ -120,6 +183,17 @@ while true; do
     fi
   fi
 
-  emit "${icon}[${position}/${length}] ${visible}" "$display" "$class"
+  bar="$(progress "$pos_raw" "$len_raw" "$BAR_WIDTH")"
+  text="${visible}"
+  [ -n "$bar" ] && text="${icon}  ${bar}  ${text}"
+
+  # Exact timings live in the tooltip, where there is room for them
+  if has_duration "$pos_raw" "$len_raw"; then
+    tooltip="${display}"$'\n'"${position} / ${length}"
+  else
+    tooltip="${display}"$'\n'"${position}"
+  fi
+
+  emit "$text" "$tooltip" "$class"
   sleep "$DELAY"
 done
