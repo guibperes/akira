@@ -131,7 +131,7 @@ while true; do
     # -d '' instead of the default newline: a title containing a line break
     # would otherwise truncate the record and silently drop every field
     # after it. The herestring appends a newline, so trim it back off.
-    IFS="$SEP" read -r -d '' status player position length pos_raw len_raw title artist <<<"$(query)"
+    IFS="$SEP" read -r -d '' status player position length pos_raw len_raw title artist < <(query)
     artist=${artist%$'\n'}
 
     # Control whitespace inside a title would render as a real line break in
