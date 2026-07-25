@@ -60,7 +60,7 @@ emit() {
 
 query() {
   playerctl --ignore-player="$IGNORED_PLAYERS" metadata --format \
-    "{{status}}${SEP}{{playerName}}${SEP}{{duration(position)}}${SEP}{{duration(mpris:length)}}${SEP}{{title}}" \
+    "{{status}}${SEP}{{playerName}}${SEP}{{duration(position)}}${SEP}{{duration(mpris:length)}}${SEP}{{title}}${SEP}{{artist}}" \
     2>/dev/null
 }
 
@@ -72,12 +72,14 @@ player=""
 position=""
 length=""
 title=""
+artist=""
 
 while true; do
   if ((frame % POLL_FRAMES == 0)); then
-    IFS="$SEP" read -r status player position length title <<<"$(query)"
+    IFS="$SEP" read -r status player position length title artist <<<"$(query)"
   fi
 
+  [[ -z "$artist" ]] && display="$title" || display="$title - $artist"
   frame=$((frame + 1))
 
   # No player, or nothing loaded: empty text hides the module
@@ -96,15 +98,15 @@ while true; do
   fi
 
   # Restart the scroll whenever the track changes
-  if [ "$title" != "$previous" ]; then
-    previous="$title"
+  if [ "$display" != "$previous" ]; then
+    previous="$display"
     offset=0
   fi
 
-  if ((${#title} <= WIDTH)); then
-    visible="$title"
+  if ((${#display} <= WIDTH)); then
+    visible="$display"
   else
-    marquee="$title$GAP"
+    marquee="$display$GAP"
     visible="${marquee:offset:WIDTH}"
 
     # Wrap around: complete the window from the beginning of the title
@@ -118,6 +120,6 @@ while true; do
     fi
   fi
 
-  emit "${icon}[${position}/${length}] ${visible}" "$title" "$class"
+  emit "${icon}[${position}/${length}] ${visible}" "$display" "$class"
   sleep "$DELAY"
 done
