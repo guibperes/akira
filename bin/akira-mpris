@@ -21,7 +21,7 @@ ENV_BAR_WIDTH="$BAR_WIDTH"
 
 # Defaults, overridden by the config file below
 WIDTH=35           # visible characters of the title
-DELAY=0.60         # seconds between frames; below ~0.6 waybar tooltips break
+DELAY=0.60         # seconds between frames
 SCROLL_STEP=1      # characters advanced per frame, compensates the slower tick
 POLL_FRAMES=4      # query playerctl every N frames
 GAP="  ·  "        # separator between the end and the restart
@@ -72,7 +72,7 @@ json_escape() {
   printf '%s' "$text"
 }
 
-# waybar redraws on every line it reads, and a module updating faster than
+#TODO: waybar redraws on every line it reads, and a module updating faster than
 # roughly 0.6 s breaks tooltips across the WHOLE bar, not just its own
 # (Waybar issue #890). Emitting only on change keeps the bar quiet in every
 # state that is not actively scrolling: short titles, paused tracks, no
@@ -209,12 +209,9 @@ while true; do
     fi
   fi
 
-  # The bar sits after the title: the title window has a fixed width, so
-  # keeping the only variable-width element at the end means nothing ever
-  # gets pushed sideways.
   bar="$(progress "$pos_raw" "$len_raw" "$BAR_WIDTH")"
-  text="${icon} ${visible}"
-  [ -n "$bar" ] && text="${text}  ${bar}"
+  text="${visible}"
+  [ -n "$bar" ] && text="${icon}  ${bar}  ${text}"
 
   # Exact timings live in the tooltip, where there is room for them
   if has_duration "$pos_raw" "$len_raw"; then
