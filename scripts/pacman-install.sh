@@ -78,7 +78,6 @@ sudo pacman -S --noconfirm \
   fragments \
   handbrake \
   loupe \
-  nwg-look \
   zathura \
   zathura-pdf-poppler \
   noto-fonts \
