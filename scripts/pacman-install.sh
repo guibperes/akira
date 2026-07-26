@@ -86,4 +86,5 @@ sudo pacman -S --noconfirm \
   noto-fonts-cjk \
   ttf-jetbrains-mono-nerd \
   ttf-liberation \
+  adw-gtk-theme \
   papirus-icon-theme
