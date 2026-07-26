@@ -16,11 +16,13 @@ ENV_WIDTH="$WIDTH"
 ENV_DELAY="$DELAY"
 ENV_GAP="$GAP"
 ENV_POLL_FRAMES="$POLL_FRAMES"
+ENV_SCROLL_STEP="$SCROLL_STEP"
 ENV_BAR_WIDTH="$BAR_WIDTH"
 
 # Defaults, overridden by the config file below
 WIDTH=35           # visible characters of the title
-DELAY=0.25         # seconds between frames
+DELAY=0.60         # seconds between frames; below ~0.6 waybar tooltips break
+SCROLL_STEP=1      # characters advanced per frame, compensates the slower tick
 POLL_FRAMES=4      # query playerctl every N frames
 GAP="  ·  "        # separator between the end and the restart
 BAR_WIDTH=8        # cells in the progress bar, 0 disables it
@@ -50,6 +52,7 @@ WIDTH="${ENV_WIDTH:-$WIDTH}"
 DELAY="${ENV_DELAY:-$DELAY}"
 GAP="${ENV_GAP:-$GAP}"
 POLL_FRAMES="${ENV_POLL_FRAMES:-$POLL_FRAMES}"
+SCROLL_STEP="${ENV_SCROLL_STEP:-$SCROLL_STEP}"
 BAR_WIDTH="${ENV_BAR_WIDTH:-$BAR_WIDTH}"
 
 # Field separator for the playerctl template, chosen so it cannot show up
@@ -69,9 +72,21 @@ json_escape() {
   printf '%s' "$text"
 }
 
+# waybar redraws on every line it reads, and a module updating faster than
+# roughly 0.6 s breaks tooltips across the WHOLE bar, not just its own
+# (Waybar issue #890). Emitting only on change keeps the bar quiet in every
+# state that is not actively scrolling: short titles, paused tracks, no
+# player. Setting "tooltip": false on the module does not help.
+last_payload=""
+
 emit() {
-  printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' \
-    "$(json_escape "$1")" "$(json_escape "$2")" "$3"
+  local payload
+  payload=$(printf '{"text":"%s","tooltip":"%s","class":"%s"}' \
+    "$(json_escape "$1")" "$(json_escape "$2")" "$3")
+
+  [ "$payload" = "$last_payload" ] && return
+  last_payload="$payload"
+  printf '%s\n' "$payload"
 }
 
 # Raw position and length are requested alongside the formatted ones: the
@@ -130,8 +145,15 @@ while true; do
   if ((frame % POLL_FRAMES == 0)); then
     # -d '' instead of the default newline: a title containing a line break
     # would otherwise truncate the record and silently drop every field
-    # after it. The herestring appends a newline, so trim it back off.
+    # after it.
+    #
+    # Process substitution rather than a herestring: <<< always appends a
+    # newline, and since IFS is \x1f that newline is not stripped. With no
+    # player running the record would come back as a single "\n" field, so
+    # status was never empty and the module kept drawing a stray icon.
     IFS="$SEP" read -r -d '' status player position length pos_raw len_raw title artist < <(query)
+
+    # The record itself still ends in a newline, which lands on the last field
     artist=${artist%$'\n'}
 
     # Control whitespace inside a title would render as a real line break in
@@ -143,7 +165,11 @@ while true; do
   [[ -z "$artist" ]] && display="$title" || display="$title - $artist"
   frame=$((frame + 1))
 
-  # No player, or nothing loaded: empty text hides the module
+  # No player, or nothing loaded: empty text hides the module.
+  # status is always a single word, so any stray whitespace means a partial
+  # or empty read and should be treated as "no player".
+  status=${status//[$' \t\n\r']/}
+
   if [ -z "$status" ] || [ "$status" = "Stopped" ]; then
     emit "" "" "stopped"
     sleep "$DELAY"
@@ -179,13 +205,16 @@ while true; do
 
     # A paused track keeps its position instead of scrolling
     if [ "$status" = "Playing" ]; then
-      offset=$(((offset + 1) % ${#marquee}))
+      offset=$(((offset + SCROLL_STEP) % ${#marquee}))
     fi
   fi
 
+  # The bar sits after the title: the title window has a fixed width, so
+  # keeping the only variable-width element at the end means nothing ever
+  # gets pushed sideways.
   bar="$(progress "$pos_raw" "$len_raw" "$BAR_WIDTH")"
-  text="${visible}"
-  [ -n "$bar" ] && text="${icon}  ${bar}  ${text}"
+  text="${icon} ${visible}"
+  [ -n "$bar" ] && text="${text}  ${bar}"
 
   # Exact timings live in the tooltip, where there is room for them
   if has_duration "$pos_raw" "$len_raw"; then
