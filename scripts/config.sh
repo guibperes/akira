@@ -5,7 +5,7 @@ sudo cp -r $AKIRA_CONFIG_PATH/sleep.conf.d /etc/systemd
 sudo cp $AKIRA_CONFIG_PATH/ly.ini /etc/ly/config.ini
 
 echo -e "# LazyVim install"
-mise use --global node
+mise use --global node usage
 git clone git@github.com:guibperes/akira-lazyvim.git $AKIRA_CONFIG_PATH/nvim
 
 echo -e "# Applying configurations"
