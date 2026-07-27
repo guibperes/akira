@@ -4,7 +4,7 @@
 -- creating the matching file under hosts/
 
 local hostnames = {
-	["akira-desktop"] = "desktop",
+	["guilherme-pc"] = "desktop",
 	["guilherme-dell"] = "notebook",
 }
 
