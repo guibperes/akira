@@ -23,6 +23,7 @@ sudo pacman -S --noconfirm \
   gstreamer \
   ntfs-3g \
   exfat-utils \
+  unzip \
   flatpak \
   hyprpolkitagent \
   hyprlock \
