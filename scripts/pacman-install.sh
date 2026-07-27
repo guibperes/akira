@@ -57,6 +57,7 @@ sudo pacman -S --noconfirm \
   power-profiles-daemon \
   bluetui \
   btop \
+  rocm-smi-lib \
   lazygit \
   task \
   taskwarrior-tui \
