@@ -6,3 +6,6 @@ sudo systemctl enable --now \
   iwd \
   avahi-daemon \
   avahi-dnsconfd
+
+systemctl --user enable --now \
+  akira-backup.timer

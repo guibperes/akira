@@ -1,0 +1,17 @@
+*/.cache
+*/.local/share/Trash
+*/.local/share/Steam
+*/.local/share/containers
+*/.local/share/libvirt/images
+*/.var/app/*/cache
+*/.var/app/com.valvesoftware.Steam
+*/.mozilla/firefox/*/cache2
+*/.config/Chromium/*/Cache
+*/node_modules
+*/target/debug
+*/target/release
+*/.venv
+*/__pycache__
+*/.gradle/caches
+*/.npm/_cacache
+*/.cargo/registry

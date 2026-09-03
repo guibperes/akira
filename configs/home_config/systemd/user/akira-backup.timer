@@ -1,0 +1,10 @@
+[Unit]
+Description=Weekly Akira Borg backup
+
+[Timer]
+OnCalendar=Sat 03:00
+RandomizedDelaySec=30m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

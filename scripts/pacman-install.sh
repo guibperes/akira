@@ -12,6 +12,7 @@ sudo pacman -S --noconfirm \
   linux-headers \
   dkms \
   fwupd \
+  borg \
   nmap \
   wavemon \
   mtr \

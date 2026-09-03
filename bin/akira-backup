@@ -1,0 +1,272 @@
+#!/usr/bin/env bash
+#
+# akira-backup - deduplicated backup of $HOME to one or more local disks,
+#                using BorgBackup 1.4. Each target holds an independent
+#                repository, so corruption never propagates between them.
+#
+# Usage:
+#   akira-backup [-n] [-i] [-c] [-t NAME] [-h]
+#
+# Options:
+#   -n        dry run: 'borg create --dry-run --list', no prune/compact
+#   -i        initialize missing repositories, then exit
+#   -c        run 'borg check --repository-only' after each backup
+#   -t NAME   restrict the run to a single target (basename of the mountpoint)
+#   -h        show this help
+#
+# Configuration: $XDG_CONFIG_HOME/akira/backup.conf
+# Exclusions:    $XDG_CONFIG_HOME/akira/backup-excludes
+#
+
+set -euo pipefail
+umask 077
+
+PROGNAME="${0##*/}"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/akira"
+CONFIG_FILE="$CONFIG_DIR/backup.conf"
+EXCLUDE_FILE="$CONFIG_DIR/backup-excludes"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/akira"
+LOCK_FILE="${XDG_RUNTIME_DIR:-/tmp}/akira-backup.lock"
+
+DRY_RUN=0
+DO_INIT=0
+DO_CHECK=0
+ONLY_TARGET=""
+WARNED=0
+
+usage() {
+	awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print; next } NR > 1 { exit }' "$0"
+}
+
+log() { printf '==> %s\n' "$*"; }
+warn() { printf '%s: %s\n' "$PROGNAME" "$*" >&2; }
+die() {
+	warn "$*"
+	exit 2
+}
+
+notify() { # notify <urgency> <summary> [body]
+	if command -v notify-send >/dev/null 2>&1; then
+		notify-send -a akira-backup -u "$1" "$2" "${3:-}" || true
+	fi
+	return 0
+}
+
+load_config() {
+	[[ -r $CONFIG_FILE ]] || die "missing configuration file: $CONFIG_FILE"
+	bash -n "$CONFIG_FILE" || die "syntax error in $CONFIG_FILE"
+	# shellcheck source=/dev/null
+	source "$CONFIG_FILE"
+
+	: "${BACKUP_SOURCE:=$HOME}"
+	: "${BACKUP_REPO_NAME:=home.borg}"
+	: "${BACKUP_ENCRYPTION:=repokey-blake2}"
+	: "${BACKUP_COMPRESSION:=zstd,3}"
+	: "${BACKUP_KEEP_DAILY:=7}"
+	: "${BACKUP_KEEP_WEEKLY:=8}"
+	: "${BACKUP_KEEP_MONTHLY:=12}"
+	: "${BACKUP_KEEP_YEARLY:=2}"
+	: "${BACKUP_NICE:=1}"
+	: "${BACKUP_REQUIRE_ALL:=0}"
+
+	[[ -n ${BACKUP_TARGETS+x} ]] || die "BACKUP_TARGETS is not defined in $CONFIG_FILE"
+	((${#BACKUP_TARGETS[@]} > 0)) || die "BACKUP_TARGETS is empty"
+	[[ -d $BACKUP_SOURCE ]] || die "source directory does not exist: $BACKUP_SOURCE"
+
+	# Never let borg silently accept a repository that moved or lost its key.
+	export BORG_RELOCATED_REPO_ACCESS_IS_OK=no
+	export BORG_UNKNOWN_UNENCRYPTED_REPO_ACCESS_IS_OK=no
+	if [[ -n ${BORG_PASSCOMMAND:-} ]]; then
+		export BORG_PASSCOMMAND
+	fi
+	if [[ -n ${BORG_PASSPHRASE:-} ]]; then
+		export BORG_PASSPHRASE
+	fi
+	return 0
+}
+
+borg_cmd() {
+	if ((BACKUP_NICE)); then
+		nice -n 19 ionice -c 3 borg "$@"
+	else
+		borg "$@"
+	fi
+}
+
+# Runs borg tolerating exit code 1, which means "warnings, but the operation
+# completed". Anything above 1 is a real error and propagates to the caller.
+run_borg() {
+	local rc=0
+	borg_cmd "$@" || rc=$?
+	if ((rc == 0)); then
+		return 0
+	fi
+	if ((rc == 1)); then
+		WARNED=1
+		warn "borg $1: finished with warnings (rc=1)"
+		return 0
+	fi
+	warn "borg $1: failed (rc=$rc)"
+	return "$rc"
+}
+
+repo_path() { printf '%s/%s\n' "$1" "$BACKUP_REPO_NAME"; }
+
+target_mounted() {
+	findmnt --noheadings --output TARGET --mountpoint "$1" >/dev/null 2>&1
+}
+
+init_target() {
+	local mount="$1" repo
+	repo="$(repo_path "$mount")"
+
+	if ! target_mounted "$mount"; then
+		warn "not mounted, skipping init: $mount"
+		return 1
+	fi
+	if [[ -f $repo/config ]]; then
+		log "repository already exists: $repo"
+		return 0
+	fi
+
+	log "initializing repository: $repo"
+	borg init --encryption "$BACKUP_ENCRYPTION" "$repo"
+	log "run 'borg key export --paper $repo' and store the output offline"
+	return 0
+}
+
+backup_target() {
+	local mount="$1" name repo
+	name="$(basename -- "$mount")"
+	repo="$(repo_path "$mount")"
+
+	if ! target_mounted "$mount"; then
+		warn "target not mounted, skipping: $mount"
+		return 1
+	fi
+	if [[ ! -f $repo/config ]]; then
+		warn "no borg repository at $repo (run '$PROGNAME -i' first)"
+		return 1
+	fi
+
+	local -a create_opts=(
+		--verbose
+		--show-rc
+		--compression "$BACKUP_COMPRESSION"
+		--one-file-system
+		--exclude-caches
+		--exclude-if-present .nobackup
+		--keep-exclude-tags
+	)
+	if [[ -r $EXCLUDE_FILE ]]; then
+		create_opts+=(--exclude-from "$EXCLUDE_FILE")
+	fi
+	if ((DRY_RUN)); then
+		# --stats is rejected together with --dry-run
+		create_opts+=(--dry-run --list --filter=AME)
+	else
+		create_opts+=(--stats)
+	fi
+
+	log "[$name] creating archive in $repo"
+	run_borg create "${create_opts[@]}" \
+		"$repo::{hostname}-{now:%Y-%m-%dT%H:%M:%S}" \
+		"$BACKUP_SOURCE"
+
+	if ((DRY_RUN)); then
+		log "[$name] dry run, skipping prune/compact"
+		return 0
+	fi
+
+	log "[$name] pruning old archives"
+	run_borg prune --verbose --list \
+		--glob-archives '{hostname}-*' \
+		--keep-daily "$BACKUP_KEEP_DAILY" \
+		--keep-weekly "$BACKUP_KEEP_WEEKLY" \
+		--keep-monthly "$BACKUP_KEEP_MONTHLY" \
+		--keep-yearly "$BACKUP_KEEP_YEARLY" \
+		"$repo"
+
+	log "[$name] compacting repository"
+	run_borg compact "$repo"
+
+	if ((DO_CHECK)); then
+		log "[$name] checking repository consistency"
+		run_borg check --repository-only "$repo"
+	fi
+
+	install -d "$STATE_DIR"
+	date -Is >"$STATE_DIR/backup-$name.last"
+	log "[$name] done"
+	return 0
+}
+
+main() {
+	local opt
+	while getopts ':hnict:' opt; do
+		case "$opt" in
+		h)
+			usage
+			return 0
+			;;
+		n) DRY_RUN=1 ;;
+		i) DO_INIT=1 ;;
+		c) DO_CHECK=1 ;;
+		t) ONLY_TARGET="$OPTARG" ;;
+		\?) die "unknown option: -$OPTARG" ;;
+		:) die "option -$OPTARG requires an argument" ;;
+		esac
+	done
+	shift $((OPTIND - 1))
+	(($# == 0)) || die "unexpected argument: $1"
+
+	command -v borg >/dev/null 2>&1 || die "borg is not installed"
+	load_config
+
+	exec 9>"$LOCK_FILE"
+	flock -n 9 || die "another $PROGNAME run is in progress"
+
+	local -a selected=()
+	local mount
+	for mount in "${BACKUP_TARGETS[@]}"; do
+		if [[ -n $ONLY_TARGET && $(basename -- "$mount") != "$ONLY_TARGET" ]]; then
+			continue
+		fi
+		selected+=("$mount")
+	done
+	((${#selected[@]} > 0)) || die "no target matches '${ONLY_TARGET}'"
+
+	if ((DO_INIT)); then
+		for mount in "${selected[@]}"; do
+			init_target "$mount" || true
+		done
+		return 0
+	fi
+
+	local -a failed=() ok=()
+	for mount in "${selected[@]}"; do
+		if backup_target "$mount"; then
+			ok+=("$(basename -- "$mount")")
+		else
+			failed+=("$(basename -- "$mount")")
+		fi
+	done
+
+	if ((${#failed[@]} > 0)); then
+		local list="${failed[*]}"
+		warn "failed targets: $list"
+		notify critical "Backup incompleto" "Falhou em: $list"
+		# With BACKUP_REQUIRE_ALL=0 a partially successful run is still a
+		# success as long as at least one target was written.
+		if ((BACKUP_REQUIRE_ALL)) || ((${#ok[@]} == 0)); then
+			return 1
+		fi
+	elif ((WARNED)); then
+		notify normal "Backup concluído com avisos" "Alvos: ${ok[*]}"
+	fi
+
+	log "finished (ok: ${ok[*]:-none})"
+	return 0
+}
+
+main "$@"
