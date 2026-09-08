@@ -3,5 +3,5 @@ Description=Akira Borg backup of $HOME
 
 [Service]
 Type=oneshot
-ExecStart=%h/.akira/scripts/akira-backup
+ExecStart=%h/.akira/bin/akira-backup
 TimeoutStartSec=6h
