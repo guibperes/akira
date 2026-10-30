@@ -73,6 +73,7 @@ sudo pacman -S --noconfirm \
   chromium \
   nautilus \
   sushi \
+  gnome-keyring \
   gnome-calculator \
   papers \
   gnome-font-viewer \
